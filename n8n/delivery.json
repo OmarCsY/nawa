@@ -1,0 +1,336 @@
+{
+  "name": "Noo Delivery v1",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "8e7c4384-eaf9-4058-ba7c-30bf78a11dff",
+      "name": "Every 15 minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "84e69aa7-f14c-4025-9371-2717ff65d7d2",
+      "name": "On inbound reply",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_schedule",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "dd2211ce-0a6f-4dfe-aa1f-9eec8d43533c",
+      "name": "Schedule due windows",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        656,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "rzQm48fFRkK45XdJ",
+          "name": "Noo Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_claim",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({p_limit:20}) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "730edf37-4ac8-4f65-96f0-9c4f3bfb3dde",
+      "name": "Claim delivery",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        112
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "rzQm48fFRkK45XdJ",
+          "name": "Noo Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().flatMap((x,i)=>{let a=x.json;return(Array.isArray(a)?a:[a]).filter(v=>v.outbox_id).map(v=>({json:v,pairedItem:{item:i}}));});"
+      },
+      "id": "02195937-118b-4c76-8c05-c86de2297a98",
+      "name": "Delivery items",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_delivery_check",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({p_id:$json.outbox_id,p_lease:$json.lease_id}) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "4bba6b08-2b0e-4492-8300-b52450795deb",
+      "name": "Recheck consent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1360,
+        112
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "rzQm48fFRkK45XdJ",
+          "name": "Noo Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d134a941-4f04-40d6-a2c8-6d1e6751df21",
+              "leftValue": "={{ $json.allowed }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5dde43eb-6edb-4666-922f-81ec736c8e72",
+      "name": "Delivery allowed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1584,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://automations-waha.gkrgfu.easypanel.host/api/sendText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Api-Key",
+              "value": "REDACTED_USE_EXISTING_WAHA_SECRET"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({session:$('Delivery items').item.json.session,chatId:$('Delivery items').item.json.chatId,text:(()=>{const p=$('Delivery items').item.json.payload;let t=p.reply_ar||'';\nconst card=p.card;\nif(card?.type==='plan')t+='\\nخطة رقم '+card.id+'\\n'+(card.data?.steps||[]).map(s=>s.text_ar).join('\\n');\nif(card?.type==='measurement')t+='\\n'+(card.data?.items||[]).map(x=>x.item_ar+': '+x.grams+' جرام').join('\\n');\nif(p.data?.days)t+='\\n'+p.data.days.map(d=>d.day+': '+({high:'خطر مرتفع',mid:'خطر متوسط',low:'خطر منخفض'}[d.level]||d.level)+(d.reason_ar?' — '+d.reason_ar:'')).join('\\n');\nfor(const m of p.messages||[])if(m.reply_ar)t+='\\n'+m.reply_ar;\nif(card?.type==='plan'&&(p.buttons||[]).some(b=>b.id==='accept_plan'))t+='\\nاكتب «بطبقها '+card.id+'» أو «ذكرني '+card.id+'» أو «ما تناسبنا '+card.id+'».';\nif((p.buttons||[]).some(b=>b.id?.startsWith('adherence_')))t+='\\nاكتب «طبقتها '+(card?.id||p.buttons[0].target_id)+'» أو «جزئيا '+(card?.id||p.buttons[0].target_id)+'» أو «ما طبقتها '+(card?.id||p.buttons[0].target_id)+'».';\nreturn t;\n})()}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "e039406e-dd0a-4fd4-b4a1-4be1d8a9fd57",
+      "name": "Send WAHA",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1808,
+        112
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_delivery_ack",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({p_id:$('Delivery items').item.json.outbox_id,p_lease:$('Delivery items').item.json.lease_id,p_provider_id:$json.id?String($json.id):null,p_success:!!$json.id&&!$json.error}) }}",
+        "options": {
+          "timeout": 25000
+        }
+      },
+      "id": "34acbff5-666a-473c-bc8d-cf6b6558bf14",
+      "name": "Acknowledge result",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2048,
+        112
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "rzQm48fFRkK45XdJ",
+          "name": "Noo Supabase"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Every 15 minutes": {
+      "main": [
+        [
+          {
+            "node": "Schedule due windows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule due windows": {
+      "main": [
+        [
+          {
+            "node": "Claim delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On inbound reply": {
+      "main": [
+        [
+          {
+            "node": "Claim delivery",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claim delivery": {
+      "main": [
+        [
+          {
+            "node": "Delivery items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delivery items": {
+      "main": [
+        [
+          {
+            "node": "Recheck consent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recheck consent": {
+      "main": [
+        [
+          {
+            "node": "Delivery allowed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delivery allowed": {
+      "main": [
+        [
+          {
+            "node": "Send WAHA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send WAHA": {
+      "main": [
+        [
+          {
+            "node": "Acknowledge result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Riyadh",
+    "saveDataErrorExecution": "none",
+    "saveDataSuccessExecution": "none",
+    "saveManualExecutions": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "6ac8a18d-6133-4833-8267-66a4dc7e039f",
+  "meta": {
+    "instanceId": "1bedb7e01ed753e19d84cef319648c2a091a5af17d7e2a98f01edfa9ed76bcdf"
+  },
+  "id": "EM8Y5zcNkfeWC3sl",
+  "tags": []
+}

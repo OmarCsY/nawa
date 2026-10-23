@@ -1,0 +1,1260 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Noo Engine",
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://automations-n8n.gkrgfu.easypanel.host/webhook/noo-engine/v1"
+    }
+  ],
+  "paths": {
+    "/channels/web/inbound": {
+      "post": {
+        "operationId": "channels_web_inbound",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/households": {
+      "post": {
+        "operationId": "households",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/measurements": {
+      "post": {
+        "operationId": "measurements",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events/parse": {
+      "post": {
+        "operationId": "events_parse",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/forecast": {
+      "post": {
+        "operationId": "forecast",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nashra": {
+      "post": {
+        "operationId": "nashra",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans/generate": {
+      "post": {
+        "operationId": "plans_generate",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans/adherence": {
+      "post": {
+        "operationId": "plans_adherence",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/outcomes": {
+      "post": {
+        "operationId": "outcomes",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/summary": {
+      "post": {
+        "operationId": "summary",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demo/advance-time": {
+      "post": {
+        "operationId": "demo_advance-time",
+        "description": "Session credential in JSON body; session:null + client_nonce bootstraps an isolated demo family. No server API key belongs in the browser.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "./engine-contract.schema.json#/$defs/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/measurements/voice": {
+      "post": {
+        "operationId": "measurements_voice",
+        "description": "Actual Opus packet/container duration validated; <=10 MiB and <=90 seconds. Gemini transcription, preview before confirmation. WAV PCM also accepted.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "audio",
+                  "metadata"
+                ],
+                "properties": {
+                  "audio": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "metadata": {
+                    "type": "string",
+                    "description": "JSON-encoded Request, type voice."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Uniform Arabic engine envelope. Domain errors use 400/401/403/409/413/503.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./engine-contract.schema.json#/$defs/Response"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "description": "Health",
+        "responses": {
+          "200": {
+            "description": "Health",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "version",
+                    "project_ref"
+                  ],
+                  "properties": {
+                    "status": {
+                      "const": "ok"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "project_ref": {
+                      "const": "xjegeggcsemvytfnvzez"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/insights/kpis": {
+      "get": {
+        "operationId": "insights_kpis",
+        "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+        "responses": {
+          "200": {
+            "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "data_kind",
+                    "error"
+                  ],
+                  "properties": {
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "data_kind": {
+                      "const": "includes_synthetic_demo"
+                    },
+                    "error": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/insights/funnel": {
+      "get": {
+        "operationId": "insights_funnel",
+        "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+        "responses": {
+          "200": {
+            "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "data_kind",
+                    "error"
+                  ],
+                  "properties": {
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "data_kind": {
+                      "const": "includes_synthetic_demo"
+                    },
+                    "error": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/insights/critical-weeks": {
+      "get": {
+        "operationId": "insights_critical_weeks",
+        "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+        "responses": {
+          "200": {
+            "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "data_kind",
+                    "error"
+                  ],
+                  "properties": {
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "data_kind": {
+                      "const": "includes_synthetic_demo"
+                    },
+                    "error": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/insights/live": {
+      "get": {
+        "operationId": "insights_live",
+        "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+        "responses": {
+          "200": {
+            "description": "Public aggregate including synthetic demo data, explicitly labeled. No household session required.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "data_kind",
+                    "error"
+                  ],
+                  "properties": {
+                    "request_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "data_kind": {
+                      "const": "includes_synthetic_demo"
+                    },
+                    "error": {
+                      "type": "null"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-10-23T01:36:25.384Z",
+  "provider": "real Gemini existing credential",
+  "results": [
+    {
+      "name": "bootstrap retry returns same secure session",
+      "passed": true
+    },
+    {
+      "name": "second session cannot confirm another household draft",
+      "passed": true
+    },
+    {
+      "name": "edit increments draft version",
+      "passed": true
+    },
+    {
+      "name": "old draft version rejected",
+      "passed": true
+    },
+    {
+      "name": "edited measurement saved 500g",
+      "passed": true
+    },
+    {
+      "name": "missing event date asks clarification",
+      "passed": true
+    },
+    {
+      "name": "short answer retains event and guests",
+      "passed": true
+    },
+    {
+      "name": "advance-time replay does not advance twice",
+      "passed": true
+    },
+    {
+      "name": "reused request id with changed payload rejected",
+      "passed": true
+    },
+    {
+      "name": "forged audio rejected before provider",
+      "passed": true
+    },
+    {
+      "name": "real ogg voice returns 700g draft",
+      "passed": true
+    },
+    {
+      "name": "real voice confirmed and saved",
+      "passed": true
+    },
+    {
+      "name": "session id cannot be substituted",
+      "passed": true
+    }
+  ]
+}

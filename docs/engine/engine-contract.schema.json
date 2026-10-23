@@ -1,0 +1,344 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://noo.local/engine-contract.schema.json",
+  "title": "Noo Engine v1 deployed contract",
+  "$ref": "#/$defs/Response",
+  "$defs": {
+    "Session": {
+      "type": "object",
+      "required": [
+        "id",
+        "token"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "token": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Action": {
+      "type": "object",
+      "required": [
+        "id",
+        "target_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "target_id": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "Button": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "target_id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "target_id": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "Error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message_ar",
+        "retryable"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message_ar": {
+          "type": "string"
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Card": {
+      "type": "object",
+      "required": [
+        "type",
+        "status",
+        "data"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "event",
+            "measurement",
+            "plan",
+            "outcome"
+          ]
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "confirmed",
+            "saved",
+            "available",
+            "pending",
+            "cancelled"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "integer"
+          ]
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "data": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Message": {
+      "type": "object",
+      "required": [
+        "reply_ar",
+        "buttons",
+        "card"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "due_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "reply_ar": {
+          "type": "string"
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Button"
+          }
+        },
+        "card": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Card"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {}
+      },
+      "additionalProperties": true
+    },
+    "Request": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "session"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "session": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Session"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "client_nonce": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Required when session is null. Generate cryptographically at the client and reuse with request_id when retrying bootstrap."
+        },
+        "type": {
+          "enum": [
+            "text",
+            "action",
+            "voice"
+          ],
+          "default": "text"
+        },
+        "text": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "action": {
+          "$ref": "#/$defs/Action"
+        },
+        "data": {
+          "type": "object"
+        },
+        "days": {
+          "enum": [
+            2,
+            7
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "session": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "session"
+            ]
+          },
+          "then": {
+            "required": [
+              "client_nonce"
+            ]
+          }
+        }
+      ]
+    },
+    "Response": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "session",
+        "household_id",
+        "stage",
+        "reply_ar",
+        "buttons",
+        "card",
+        "messages",
+        "effective_today",
+        "is_demo",
+        "error"
+      ],
+      "properties": {
+        "request_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "session": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Session"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "household_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reply_ar": {
+          "type": "string"
+        },
+        "buttons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Button"
+          }
+        },
+        "card": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Card"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Message"
+          }
+        },
+        "effective_today": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "is_demo": {
+          "type": "boolean"
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Error"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {}
+      },
+      "additionalProperties": false
+    }
+  }
+}
