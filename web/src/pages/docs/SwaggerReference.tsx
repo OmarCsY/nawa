@@ -1,37 +1,26 @@
 import SwaggerUI from 'swagger-ui-react'
 import 'swagger-ui-react/swagger-ui.css'
-import { DEMO_API_KEY } from '../../lib/demo'
-import { env } from '../../lib/env'
+import { getDocsSession } from '../../lib/docsSession'
+import { newRequestId } from '../../lib/engineSession'
 import './swagger-theme.css'
-
-/*
- * The only module that imports Swagger UI (≈1.7 MB). DocsPage loads it with React.lazy, so no other
- * route ever downloads it. Swagger stays left-to-right inside the right-to-left page; `.nawa-swagger`
- * (swagger-theme.css) repaints it in Nawa's palette.
- */
 export default function SwaggerReference() {
-  return (
-    <div dir="ltr" className="nawa-swagger">
-      <SwaggerUI
-        url="/openapi.yaml"
-        docExpansion="list"
-        defaultModelsExpandDepth={-1}
-        displayRequestDuration
-        deepLinking={false}
-        filter
-        tryItOutEnabled
-        persistAuthorization
-        onComplete={(system) => {
-          // the showcase key is already entered, so «Try it out» works on the first click
-          system.preauthorizeApiKey('ApiKeyAuth', DEMO_API_KEY)
-          // the spec ships with a placeholder host; point it at the engine this build talks to
-          if (env.engineUrl) {
-            const spec = system.specSelectors.specJson().toJS()
-            spec.servers = [{ url: env.engineUrl, description: 'Nawa Engine · VITE_ENGINE_URL' }]
-            system.specActions.updateJsonSpec(spec)
-          }
-        }}
-      />
-    </div>
-  )
+  return <div dir="ltr" className="nawa-swagger"><SwaggerUI url="/openapi.yaml" docExpansion="list" defaultModelsExpandDepth={-1} displayRequestDuration filter persistAuthorization={false}
+    requestInterceptor={request => {
+      if (request.method?.toUpperCase() === 'POST') {
+        const session = getDocsSession()
+        if (!session) throw new Error('ابدأ جلسة توثيق تجريبية أولًا.')
+        if (request.body instanceof FormData) {
+          let metadata: Record<string, unknown> = {}
+          try { metadata = JSON.parse(String(request.body.get('metadata') || '{}')) } catch { /* Use a fresh metadata object. */ }
+          delete metadata.household_id
+          request.body.set('metadata', JSON.stringify({ ...metadata, request_id: newRequestId(), session, type: 'voice' }))
+        } else {
+          let body: Record<string, unknown> = {}
+          try { body = JSON.parse(String(request.body || '{}')) } catch { /* Safe empty request. */ }
+          delete body.household_id
+          request.body = JSON.stringify({ ...body, request_id: newRequestId(), session })
+        }
+      }
+      return request
+    }} /></div>
 }

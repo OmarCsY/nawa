@@ -44,10 +44,11 @@ export function KpiSection({ kpis, tools }: KpiSectionProps) {
             value={nawa.waste_reduction_pct}
             decimals={1}
             unit="%"
+            hint="نسبة موجبة تعني انخفاضًا، والسالبة تعني زيادة. الشرطة تعني عدم كفاية المقارنة."
           />
           {control && (
             <ControlLine inverse>
-              مقابل <Num className="font-bold">{formatSigned(control.waste_reduction_pct)}%</Num> في المجموعة الضابطة
+              مقابل <Num className="font-bold">{control.waste_reduction_pct === null ? '—' : `${formatSigned(control.waste_reduction_pct)}%`}</Num> في المجموعة الضابطة
             </ControlLine>
           )}
         </Card>
@@ -56,7 +57,7 @@ export function KpiSection({ kpis, tools }: KpiSectionProps) {
           <KpiNumber
             size="xl"
             label="نسبة تطبيق التوصيات"
-            value={nawa.adherence_pct ?? 0}
+            value={nawa.adherence_pct}
             decimals={1}
             unit="%"
           />
@@ -75,7 +76,7 @@ export function KpiSection({ kpis, tools }: KpiSectionProps) {
           <KpiNumber size="xl" label="معدل إعادة القياس" value={nawa.remeasure_pct} decimals={1} unit="%" />
           {control && (
             <ControlLine>
-              مقابل <Num className="font-bold text-ink">{pct(control.remeasure_pct)}</Num> في المجموعة الضابطة
+              مقابل <Num className="font-bold text-ink">{control.remeasure_pct === null ? '—' : pct(control.remeasure_pct)}</Num> في المجموعة الضابطة
             </ControlLine>
           )}
         </Card>

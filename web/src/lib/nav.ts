@@ -1,4 +1,4 @@
-import { SHOWCASE_HOUSEHOLD_ID } from './demo'
+
 
 /** The four places to go, in the order they appear in the top nav (desktop) and the menus (mobile). */
 export interface NavEntry {
@@ -13,9 +13,10 @@ export interface NavEntry {
 export const NAV: readonly NavEntry[] = [
   { to: '/', label: 'المحادثة', end: true },
   { to: '/dashboard', label: 'لوحة لتدوم', end: false },
-  { to: `/n/${SHOWCASE_HOUSEHOLD_ID}`, label: 'نشرة أسرة', end: false, match: '/n/' },
+  { to: '/n/session', label: 'نشرة جلستك', end: false, match: '/n/' },
   { to: '/docs', label: 'ال API', end: false },
 ]
 
 export const isActive = (entry: NavEntry, pathname: string) =>
   entry.end ? pathname === entry.to : pathname.startsWith(entry.match ?? entry.to)
+

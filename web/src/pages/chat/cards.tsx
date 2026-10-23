@@ -19,7 +19,7 @@ export function ItemsCard({ items }: { items: ItemsPayload }) {
   return (
     <>
       <div className="mt-0.5 overflow-hidden rounded-lg border border-wa-ink/10">
-        <p className="bg-wa-bar px-3 py-2 text-[13px] font-bold">سجّلت {countAr(items.rows.length, ITEMS)}</p>
+        <p className="bg-wa-bar px-3 py-2 text-[13px] font-bold">{items.status === 'confirmed' ? 'قياس محفوظ' : 'مسودة للمراجعة'} · {countAr(items.rows.length, ITEMS)}</p>
         <ul>
           {items.rows.map((r) => (
             <li key={r.name} className="flex items-center justify-between gap-3 border-t border-wa-ink/10 px-3 py-2">
@@ -36,7 +36,7 @@ export function ItemsCard({ items }: { items: ItemsPayload }) {
           <span className="numerals font-bold">{kg(items.total_g)}</span>
         </p>
       </div>
-      <p className="mt-1.5 text-[14.5px]">صح؟</p>
+      <p className="mt-1.5 text-[14.5px]">{items.estimated ? 'الوزن تقريبي من قاموس الوحدات. ' : ''}{items.status === 'confirmed' ? 'تم تأكيد القياس وحفظه.' : 'راجع الأصناف قبل التأكيد.'}</p>
     </>
   )
 }
@@ -58,7 +58,7 @@ export function EventCard({ event }: { event: EventPayload }) {
           </p>
         </div>
       </div>
-      <p className="mt-1.5 text-[14.5px]">سجّلت المناسبة، صح؟</p>
+      <p className="mt-1.5 text-[14.5px]">{event.status === 'confirmed' ? 'المناسبة مؤكدة ومحفوظة.' : 'مسودة مناسبة؛ لم تُحفظ بعد.'}</p>
     </>
   )
 }
@@ -114,14 +114,15 @@ export function ResultCard({ result }: { result: ResultPayload }) {
     <div className="relative mt-0.5 overflow-hidden rounded-lg border border-saffron/40 bg-saffron-soft px-3 py-4 text-center">
       <span aria-hidden className="absolute -start-6 -top-6 size-20 rounded-full bg-saffron/15" />
       <span aria-hidden className="absolute -bottom-8 -end-5 size-24 rounded-full bg-plum/10" />
-      <p className="relative text-[13px] font-medium text-plum">أحسنتم! هدر العزيمة</p>
+      <p className="relative text-[13px] font-medium text-plum">نتيجة قياس المناسبة</p>
       <p className="numerals relative mt-1 text-[2.6rem] font-bold leading-tight text-plum">{kg(result.actual_g)}</p>
       <p className="numerals relative mt-1.5 flex items-center justify-center gap-x-2 text-[13px] whitespace-nowrap">
-        <span>عزيمتكم الماضية {kg(result.previous_g)}</span>
-        <span aria-hidden className="text-wa-meta">·</span>
-        <span className="rounded-full bg-plum px-2.5 py-0.5 font-bold text-sand">
-          أقل <bdi dir="ltr">{formatNumber(result.less_pct, 0)}%</bdi>
-        </span>
+        {result.change_pct === null || result.previous_g === null ? <span className="whitespace-normal">لا يوجد قياس سابق صالح للمقارنة.</span> : <>
+          <span>القياس السابق {kg(result.previous_g)}</span>
+          <span className="rounded-full bg-plum px-2.5 py-0.5 font-bold text-sand">
+            {result.change_pct < 0 ? 'أقل' : result.change_pct > 0 ? 'أكثر' : 'دون تغيير'} <bdi dir="ltr">{formatNumber(Math.abs(result.change_pct), 1)}%</bdi>
+          </span>
+        </>}
       </p>
     </div>
   )
@@ -135,7 +136,7 @@ export function LinkCard({ link, lead }: { link: LinkPayload; lead?: string }) {
       {lead && <p className="mb-1.5 text-[14.5px]">{lead}</p>}
       <a
         href={link.url}
-        target="_blank"
+        target={link.url === '/n/session' ? '_self' : '_blank'}
         rel="noopener noreferrer"
         className="block overflow-hidden rounded-lg border border-wa-ink/10 bg-wa-bar transition active:brightness-95"
       >

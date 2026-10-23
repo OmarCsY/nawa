@@ -49,6 +49,7 @@ function NashraView({ nashra }: { nashra: Nashra }) {
   return (
     <div className={COLUMN}>
       <HeroCard nashra={nashra} />
+      {nashra.events.length > 0 && <Card title="مناسبات أسرتكم"><ul className="space-y-2">{nashra.events.map((e,i) => <li key={i}>{({ gathering: 'عزيمة', travel: 'سفر', ramadan_iftar: 'فطور رمضان', eid: 'عيد' } as Record<string,string>)[e.type] || 'مناسبة'} · {formatDayLong(e.starts_on)}{e.guests !== null && ` · ${e.guests} شخص`}</li>)}</ul></Card>}
 
       <Card padded={false} className="px-2 pb-4 pt-4" aria-label="أيام الأسبوع">
         <div className="mb-2 flex items-baseline justify-between gap-3 px-3">

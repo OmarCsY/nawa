@@ -13,6 +13,13 @@ export function useAsync<T>(load: () => Promise<T>): AsyncState<T> {
   const [error, setError] = useState<unknown>(null)
   const [loading, setLoading] = useState(true)
   const [attempt, setAttempt] = useState(0)
+  useEffect(() => {
+    const refresh = () => setAttempt(n => n + 1)
+    window.addEventListener('nawa:data-changed', refresh)
+    window.addEventListener('focus', refresh)
+    const timer = window.setInterval(refresh, 30_000)
+    return () => { window.removeEventListener('nawa:data-changed', refresh); window.removeEventListener('focus', refresh); window.clearInterval(timer) }
+  }, [])
 
   useEffect(() => {
     let current = true

@@ -28,6 +28,7 @@ function Confetti() {
 
 /** The result card: celebratory when waste fell, calm and honest when it didn't. */
 export function OutcomeCard({ outcome }: { outcome: NashraOutcome }) {
+  if (outcome.change_pct === null || outcome.prev_similar_g === null) return <section className="rounded-card border border-line bg-paper p-6 text-center" aria-label="نتيجة آخر مناسبة"><h2>نتيجة آخر مناسبة</h2><p>{formatNumber(outcome.actual_g / 1000)} كجم</p><p>لا يوجد قياس سابق صالح للمقارنة.</p></section>
   const less = outcome.change_pct < 0
   const kg = (g: number) => formatNumber(g / 1000)
   const pct = formatNumber(Math.abs(outcome.change_pct), 0)

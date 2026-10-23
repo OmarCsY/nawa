@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import { DemoBadge, PageHeader } from '../components'
 import { SHOWCASE_HOUSEHOLD_ID } from '../lib/demo'
 import {
@@ -8,6 +9,8 @@ import {
   fetchKpis,
   fetchToolUsage,
   fetchWasteByItem,
+  setDashboardScope,
+  dashboardScope,
 } from '../lib/dashboard'
 import { useAsync } from '../lib/useAsync'
 import { CohortTrendPanel } from './dashboard/CohortTrendPanel'
@@ -21,6 +24,7 @@ import { WasteByItemPanel } from './dashboard/WasteByItemPanel'
 
 /** Litadoom's dashboard: aggregates only, read from v_* views; the live feed also listens on Realtime. */
 export function DashboardPage() {
+  const [scope, setScope] = useState(dashboardScope)
   // Each section loads (and fails) on its own, so one slow view never blanks the whole screen.
   const kpis = useAsync(fetchKpis)
   const tools = useAsync(fetchToolUsage)
@@ -45,10 +49,12 @@ export function DashboardPage() {
               <span aria-hidden>←</span>
             </Link>
             <LiveIndicator status={live.status} />
-            <DemoBadge />
+            {scope === 'demo' && <DemoBadge />}
           </div>
         }
       />
+
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-line bg-paper p-4"><label htmlFor="data-scope">نطاق المؤشرات والبث الحي</label><select id="data-scope" value={scope} onChange={e => { const value = e.target.value as 'demo' | 'real'; setScope(value); setDashboardScope(value) }} className="rounded-full border border-line px-4 py-2"><option value="demo">بيانات العرض التجريبية</option><option value="real">الاستخدام الفعلي فقط</option></select><p className="text-xs text-muted">{scope === 'demo' ? 'بيانات مولدة وجلسات ديمو؛ ليست أثرًا ميدانيًا مثبتًا.' : 'يستبعد الأسر المولدة وجلسات الديمو. غياب المقارنة يظهر بشرطة.'} خريطة الخطر مبنية على تقويم العرض.</p></div>
 
       <KpiSection kpis={kpis} tools={tools} />
 

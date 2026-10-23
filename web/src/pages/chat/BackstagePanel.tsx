@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { Card } from '../../components'
 import { cx } from '../../lib/cx'
-import { DEMO_HOUSEHOLD_ID } from '../../lib/demo'
 import { token } from '../../lib/theme'
 import type { Turn } from './chatStore'
 import { buildPipeline } from './pipeline'
@@ -143,8 +142,8 @@ export function BackstagePanel({ turn, typing, className }: { turn: Turn | null;
             لوحة لتدوم
           </a>
           <a
-            href={`/n/${DEMO_HOUSEHOLD_ID}`}
-            target="_blank"
+            href="/n/session"
+            target="_self"
             rel="noopener noreferrer"
             className="inline-flex h-9 items-center rounded-full border border-sand/40 px-4 text-sand transition-colors hover:bg-sand/10"
           >

@@ -6,8 +6,8 @@ function read(name: keyof ImportMetaEnv): string {
 }
 
 export const env = {
-  supabaseUrl: read('VITE_SUPABASE_URL'),
-  supabaseKey: read('VITE_SUPABASE_PUBLISHABLE_KEY'),
-  engineUrl: read('VITE_ENGINE_URL').replace(/\/+$/, ''),
-  useMock: read('VITE_USE_MOCK').toLowerCase() === 'true',
+  supabaseUrl: read('VITE_SUPABASE_URL') || 'https://xjegeggcsemvytfnvzez.supabase.co',
+  supabaseKey: read('VITE_SUPABASE_PUBLISHABLE_KEY') || 'sb_publishable_WDIZovqRMVBIPPAVvPRkQQ_Qb2Q7l4j',
+  engineUrl: (read('VITE_ENGINE_URL') || 'https://automations-n8n.gkrgfu.easypanel.host/webhook/noo-engine/v1').replace(/\/+$/, ''),
+  useMock: import.meta.env.DEV && read('VITE_USE_MOCK').toLowerCase() === 'true',
 } as const

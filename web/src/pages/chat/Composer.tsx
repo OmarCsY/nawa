@@ -16,6 +16,7 @@ const PROBLEMS: Record<RecorderProblem, string> = {
   missing: 'ما لقينا مايك على الجهاز. اكتبوا رسالتكم وأنا بخدمتكم.',
   unsupported: 'المتصفح هذا ما يدعم التسجيل الصوتي. اكتبوا رسالتكم وأنا بخدمتكم.',
   short: 'الصوتية قصيرة مرة. اضغطوا على المايك وكمّلوا كلامكم أكثر.',
+  large: 'الملف أكبر من الحد المسموح: 10 ميجابايت.',
 }
 
 /** A silent stand-in for a voice note, for demo browsers with no microphone (mock engine only). */
@@ -67,7 +68,7 @@ export function Composer({ busy }: { busy: boolean }) {
 
   function submit(e?: FormEvent) {
     e?.preventDefault()
-    if (!hasText) return
+    if (!hasText || busy) return
     chat.say(text)
     setText('')
     input.current?.focus()
@@ -86,7 +87,7 @@ export function Composer({ busy }: { busy: boolean }) {
     rec.release(far)
   }
 
-  const showMic = !hasText && !(rec.phase === 'recording' && !rec.holding)
+  const showMic = !hasText && rec.phase !== 'preview' && !(rec.phase === 'recording' && !rec.holding)
 
   return (
     <div className="shrink-0 bg-wa-bg pb-[max(0.5rem,env(safe-area-inset-bottom))]">
@@ -111,13 +112,14 @@ export function Composer({ busy }: { busy: boolean }) {
       )}
 
       <form onSubmit={submit} className="flex items-end gap-2 px-2">
-        {recording ? (
+        {rec.preview ? <div className="min-w-0 flex-1 rounded-xl bg-wa-in p-2"><p className="text-xs">راجع التسجيل قبل الإرسال</p><audio controls src={rec.preview.url} className="h-9 w-full" /><button type="button" onClick={rec.cancel} className="text-xs">إلغاء التسجيل</button></div> : recording ? (
           <RecordingBar seconds={rec.seconds} holding={rec.holding} onCancel={rec.cancel} />
         ) : (
           <div className="flex h-11 min-w-0 flex-1 items-center rounded-full bg-wa-in px-4 shadow-[0_1px_0.5px_rgb(11_20_26/0.13)]">
             <input
               ref={input}
               value={text}
+              disabled={busy}
               onChange={(e) => setText(e.target.value)}
               dir="auto"
               enterKeyHint="send"
@@ -141,6 +143,7 @@ export function Composer({ busy }: { busy: boolean }) {
               if (Date.now() - lastMicRelease.current > 500 && !recording) void rec.start(false)
             }}
             aria-label="سجّل صوتية"
+            disabled={busy}
             className={cx(
               'grid size-11 shrink-0 touch-none select-none place-items-center rounded-full bg-wa-accent text-white shadow-[0_1px_1px_rgb(11_20_26/0.2)] transition-transform',
               rec.holding && 'scale-125',
@@ -156,12 +159,14 @@ export function Composer({ busy }: { busy: boolean }) {
               if (recording && Date.now() - lastMicRelease.current > 500) rec.send()
             }}
             aria-label="إرسال"
+            disabled={busy}
             className="grid size-11 shrink-0 place-items-center rounded-full bg-wa-accent text-white shadow-[0_1px_1px_rgb(11_20_26/0.2)]"
           >
             <SendIcon className="size-5 -scale-x-100" />
           </button>
         )}
       </form>
+      {!recording && <label className="mx-4 mt-1 block w-fit cursor-pointer text-[11px] text-wa-meta">أو ارفع ملفًا صوتيًا · حتى 90 ثانية و10 ميجابايت<input className="sr-only" type="file" accept="audio/*,.mp4,.m4a,.ogg,.webm" aria-label="رفع ملف صوتي" disabled={busy} onChange={e => { const f = e.target.files?.[0]; if (f) chat.sendVoice(f, 0); e.target.value = '' }} /></label>}
     </div>
   )
 }

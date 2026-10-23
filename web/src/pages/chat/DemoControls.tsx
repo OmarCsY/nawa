@@ -16,9 +16,9 @@ export function DemoControls({ today, busy }: { today: string; busy: boolean }) 
           قدّم يومين
         </Button>
         <Button size="sm" variant="secondary" className="px-2" disabled={busy} onClick={chat.afterEvent}>
-          بعد المناسبة
+          قدّم أسبوعًا
         </Button>
-        <Button size="sm" variant="ghost" className="px-2" onClick={chat.reset}>
+        <Button size="sm" variant="ghost" className="px-2" disabled={busy} onClick={chat.reset}>
           ابدأ من جديد
         </Button>
       </div>

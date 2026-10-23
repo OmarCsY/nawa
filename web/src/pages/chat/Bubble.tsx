@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { cx } from '../../lib/cx'
 import type { ChatMessage } from './chatStore'
+import type { QuickButton } from '../../lib/engineAdapter'
 import { Ticks } from './icons'
 import { clock } from './waFormat'
 
@@ -90,9 +91,9 @@ export function QuickReplies({
   disabled,
   onPress,
 }: {
-  buttons: Array<{ id: string; label: string }>
+  buttons: QuickButton[]
   disabled: boolean
-  onPress: (button: { id: string; label: string }) => void
+  onPress: (button: QuickButton) => void
 }) {
   return (
     <div className="mt-1 flex w-[min(88%,19.5rem)] flex-wrap gap-1">

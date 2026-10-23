@@ -43,7 +43,7 @@ export async function readView<Row = Record<string, unknown>>(view: ViewName, op
   if (options.order) query = query.order(options.order.column, { ascending: options.order.ascending ?? true })
   if (options.limit) query = query.limit(options.limit)
   const { data, error } = await query
-  if (error) throw error
+  if (error) throw new Error('تعذّر تحميل البيانات. تحقق من الاتصال وحاول مرة أخرى.')
   return (data ?? []) as Row[]
 }
 
@@ -72,6 +72,12 @@ export function subscribeLiveFeed<Row = Record<string, unknown>>(
 /** A household's bulletin (nashra) via rpc fn_nashra. Args are passed through as named params. */
 export async function fetchNashra<Result = unknown>(args: Record<string, unknown>): Promise<Result> {
   const { data, error } = await db().rpc('fn_nashra', args)
-  if (error) throw error
+  if (error) throw new Error('تعذّر تحميل النشرة أو لا يملك هذا الرابط صلاحية قراءتها.')
+  return data as Result
+}
+
+export async function readDashboardScope<Result>(scope: 'demo' | 'real'): Promise<Result> {
+  const { data, error } = await db().rpc('noo_dashboard_read', { p_scope: scope })
+  if (error) throw new Error('تعذّر تحميل بيانات اللوحة. حاول مرة أخرى.')
   return data as Result
 }
