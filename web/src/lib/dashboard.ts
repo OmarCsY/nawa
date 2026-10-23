@@ -1,4 +1,4 @@
-import { readView } from './supabase'
+import { readDashboardScope, readView } from './supabase'
 import type { LitadoomTool, RiskLevel } from './types'
 
 /* Row shapes of the dashboard views (aggregates only — no household ids ever reach the browser). */
@@ -9,9 +9,9 @@ export interface KpiRow {
   cohort: Cohort
   households: number
   measurements: number
-  waste_reduction_pct: number // already in percent, e.g. 21.8
+  waste_reduction_pct: number | null // already in percent, e.g. 21.8
   adherence_pct: number | null // null for control (it gets no plans)
-  remeasure_pct: number
+  remeasure_pct: number | null
 }
 
 export interface FunnelRow {
@@ -36,6 +36,7 @@ export interface LiveRow {
   reason_ar: string
   created_at: string
   source?: string // only on realtime rows from live_feed
+  is_demo?: boolean
 }
 
 export interface CohortTrendRow {
@@ -60,21 +61,28 @@ export interface ToolUsageRow {
 /* PostgREST returns numeric columns as numbers, but be defensive: a numeric(…) column can arrive as a string. */
 const num = (v: unknown): number => (typeof v === 'number' ? v : Number(v))
 const numOrNull = (v: unknown): number | null => (v === null || v === undefined ? null : num(v))
+export type DashboardScope = 'demo' | 'real'
+let scope: DashboardScope = 'demo'
+export const dashboardScope = () => scope
+export function setDashboardScope(value: DashboardScope) { scope = value; cached = null; window.dispatchEvent(new Event('nawa:data-changed')) }
+type Snapshot = { kpis: KpiRow[]; funnel: FunnelRow[]; trend: CohortTrendRow[]; waste: WasteRow[]; tools: ToolUsageRow[] }
+let cached: { scope: DashboardScope; at: number; request: Promise<Snapshot> } | null = null
+function snapshot() { if (!cached || cached.scope !== scope || Date.now() - cached.at > 1500) cached = { scope, at: Date.now(), request: readDashboardScope<Snapshot>(scope) }; return cached.request }
 
 export async function fetchKpis(): Promise<KpiRow[]> {
-  const rows = await readView<KpiRow>('v_kpis')
+  const rows = (await snapshot()).kpis
   return rows.map((r) => ({
     ...r,
     households: num(r.households),
     measurements: num(r.measurements),
-    waste_reduction_pct: num(r.waste_reduction_pct),
+    waste_reduction_pct: numOrNull(r.waste_reduction_pct),
     adherence_pct: numOrNull(r.adherence_pct),
-    remeasure_pct: num(r.remeasure_pct),
+    remeasure_pct: numOrNull(r.remeasure_pct),
   }))
 }
 
 export async function fetchFunnel(): Promise<FunnelRow[]> {
-  const rows = await readView<FunnelRow>('v_funnel', { order: { column: 'stage_order' } })
+  const rows = (await snapshot()).funnel.sort((a,b) => a.stage_order - b.stage_order)
   return rows.map((r) => ({ ...r, count: num(r.count) }))
 }
 
@@ -90,21 +98,21 @@ export async function fetchLive(): Promise<LiveRow[]> {
     order: { column: 'created_at', ascending: false },
     limit: LIVE_LIMIT,
   })
-  return rows.map((r) => ({ ...r, grams: num(r.grams) }))
+  return rows.filter(r => (r.is_demo ?? true) === (scope === 'demo')).map((r) => ({ ...r, grams: num(r.grams) }))
 }
 
 export async function fetchCohortTrend(): Promise<CohortTrendRow[]> {
-  const rows = await readView<CohortTrendRow>('v_cohort_trend', { order: { column: 'week_start' } })
+  const rows = (await snapshot()).trend.sort((a,b) => a.week_start.localeCompare(b.week_start))
   return rows.map((r) => ({ ...r, avg_event_kg: num(r.avg_event_kg), events: num(r.events) }))
 }
 
 export async function fetchWasteByItem(): Promise<WasteRow[]> {
-  const rows = await readView<WasteRow>('v_waste_by_item_reason')
+  const rows = (await snapshot()).waste
   return rows.map((r) => ({ ...r, grams: num(r.grams), entries: num(r.entries) }))
 }
 
 export async function fetchToolUsage(): Promise<ToolUsageRow[]> {
-  const rows = await readView<ToolUsageRow>('v_tool_usage')
+  const rows = (await snapshot()).tools
   return rows.map((r) => ({ ...r, clicks: num(r.clicks) }))
 }
 

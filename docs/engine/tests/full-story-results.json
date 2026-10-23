@@ -1,0 +1,1216 @@
+{
+  "timestamp": "2026-10-23T02:17:45.370Z",
+  "provider": "real Gemini",
+  "project_ref": "xjegeggcsemvytfnvzez",
+  "plan_id": 350,
+  "steps": [
+    {
+      "route": "channels/web/inbound",
+      "input": "مرحبا",
+      "reply": {
+        "card": null,
+        "data": null,
+        "error": null,
+        "stage": "awaiting_consent",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "حياك في نوء 🌱 نساعد أسرتك تقلل هدر الأكل. نستخدم عدد أفراد الأسرة والمدينة لتخصيص المساعدة، ونرسل لك رسائل واتساب. توافق؟ اكتب «موافق» أو «لا». وتقدر توقف بكلمة «إيقاف».",
+        "request_id": "7962ae82-b2fb-4aa2-bb69-b4119317b68c",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "موافق",
+      "reply": {
+        "card": null,
+        "data": null,
+        "error": null,
+        "stage": "awaiting_size",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "تمام 🌱 كم عدد أفراد الأسرة؟ اكتب رقمًا من 1 إلى 20.",
+        "request_id": "e540ab49-6d65-4bde-b2b3-ecd0fc48d200",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "4",
+      "reply": {
+        "card": null,
+        "data": null,
+        "error": null,
+        "stage": "awaiting_city",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "سجلت عددكم: 4 🌱 في أي مدينة تسكنون؟ اكتب اسم المدينة فقط.",
+        "request_id": "8afb2ec2-c57e-462b-9590-c9db1d631f4e",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "الرياض",
+      "reply": {
+        "card": null,
+        "data": null,
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "اكتمل تسجيل أسرتكم 🌱 عدد الأفراد: 4، المدينة: الرياض. تقدر تسجل الهدر الآن، مثل «رمينا 500 جرام رز و200 جرام خبز».",
+        "request_id": "ce1969bc-82c4-4194-855d-5f20ec1df17a",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "measurements",
+      "input": {
+        "data": {
+          "items": [
+            {
+              "item_ar": "رز",
+              "category": "grains_cooked",
+              "grams": 2000,
+              "reason": "other"
+            },
+            {
+              "item_ar": "خبز",
+              "category": "bread",
+              "grams": 1000,
+              "reason": "other"
+            }
+          ]
+        }
+      },
+      "reply": {
+        "card": {
+          "id": "f5308211-a5fa-4934-a6af-dbb9044429d6",
+          "data": {
+            "items": [
+              {
+                "grams": 2000,
+                "reason": "other",
+                "item_ar": "رز",
+                "category": "grains_cooked",
+                "confidence": 1
+              },
+              {
+                "grams": 1000,
+                "reason": "other",
+                "item_ar": "خبز",
+                "category": "bread",
+                "confidence": 1
+              }
+            ],
+            "source": "text",
+            "event_id": null,
+            "estimated": false,
+            "transcript": null,
+            "measured_on": "2026-10-25"
+          },
+          "type": "measurement",
+          "status": "draft",
+          "version": 1
+        },
+        "data": null,
+        "error": null,
+        "stage": "awaiting_measurement_confirmation",
+        "buttons": [
+          {
+            "id": "confirm_measurement",
+            "label": "صح",
+            "version": 1,
+            "target_id": "f5308211-a5fa-4934-a6af-dbb9044429d6"
+          },
+          {
+            "id": "edit_measurement",
+            "label": "عدّل",
+            "version": 1,
+            "target_id": "f5308211-a5fa-4934-a6af-dbb9044429d6"
+          },
+          {
+            "id": "cancel_measurement",
+            "label": "إلغاء",
+            "version": 1,
+            "target_id": "f5308211-a5fa-4934-a6af-dbb9044429d6"
+          }
+        ],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "هذا القياس للمراجعة: 3000 جرام بتاريخ 2026-10-25. اكتب «صح» للحفظ أو «عدّل» أو «إلغاء».",
+        "request_id": "94fbeede-0683-41a3-8390-55f939de74a8",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "confirm_measurement",
+      "reply": {
+        "card": {
+          "id": 2043,
+          "data": {
+            "items": [
+              {
+                "grams": 2000,
+                "reason": "other",
+                "item_ar": "رز",
+                "category": "grains_cooked",
+                "confidence": 1
+              },
+              {
+                "grams": 1000,
+                "reason": "other",
+                "item_ar": "خبز",
+                "category": "bread",
+                "confidence": 1
+              }
+            ],
+            "source": "text",
+            "total_g": 3000,
+            "event_id": null,
+            "estimated": false,
+            "transcript": null,
+            "measured_on": "2026-10-25"
+          },
+          "type": "measurement",
+          "status": "confirmed"
+        },
+        "data": null,
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "تم حفظ القياس ✅ المجموع 3000 جرام.",
+        "request_id": "b39013db-5fdb-45a5-8d17-c9fd7fe262a1",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "events/parse",
+      "input": "الخميس الجاي عندنا عزيمة 14 شخص",
+      "reply": {
+        "card": {
+          "id": "a53cb263-9bd5-4b75-a534-96e0596e31c2",
+          "data": {
+            "type": "gathering",
+            "guests": 14,
+            "ends_on": null,
+            "raw_text": "الخميس الجاي عندنا عزيمة 14 شخص",
+            "starts_on": "2026-10-29"
+          },
+          "type": "event",
+          "status": "draft",
+          "version": 1
+        },
+        "data": null,
+        "error": null,
+        "stage": "awaiting_event_confirmation",
+        "buttons": [
+          {
+            "id": "confirm_event",
+            "label": "صح",
+            "version": 1,
+            "target_id": "a53cb263-9bd5-4b75-a534-96e0596e31c2"
+          },
+          {
+            "id": "edit_event",
+            "label": "عدّل",
+            "version": 1,
+            "target_id": "a53cb263-9bd5-4b75-a534-96e0596e31c2"
+          },
+          {
+            "id": "cancel_event",
+            "label": "إلغاء",
+            "version": 1,
+            "target_id": "a53cb263-9bd5-4b75-a534-96e0596e31c2"
+          }
+        ],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "فهمت: عزيمة يوم 2026-10-29 لـ14 شخص. صحيح؟ لم تُحفظ بعد.",
+        "request_id": "5e02a703-66eb-46c1-8293-17fc7c8670b5",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "confirm_event",
+      "reply": {
+        "card": {
+          "id": 678,
+          "data": {
+            "type": "gathering",
+            "guests": 14,
+            "ends_on": null,
+            "type_ar": "عزيمة",
+            "starts_on": "2026-10-29"
+          },
+          "type": "event",
+          "status": "confirmed"
+        },
+        "data": {
+          "forecast": [
+            {
+              "day": "2026-10-25",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            },
+            {
+              "day": "2026-10-26",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            },
+            {
+              "day": "2026-10-27",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            },
+            {
+              "day": "2026-10-28",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            },
+            {
+              "day": "2026-10-29",
+              "level": "high",
+              "ratio": 2.8,
+              "drivers": [
+                "gathering"
+              ],
+              "reason_ar": "عزيمة 14 شخص",
+              "expected_kg": 4.2,
+              "items_at_risk": [
+                "خبز",
+                "رز مطبوخ",
+                "لحوم"
+              ]
+            },
+            {
+              "day": "2026-10-30",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "gathering_after"
+              ],
+              "reason_ar": "بواقي عزيمة الأمس",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "رز مطبوخ",
+                "لحوم"
+              ]
+            },
+            {
+              "day": "2026-10-31",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            }
+          ]
+        },
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "تم حفظ عزيمة بتاريخ 2026-10-29 ✅",
+        "request_id": "6a43a72b-2efa-4708-a772-3b50bb596574",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "plans/generate",
+      "input": {
+        "data": {
+          "event_id": 678
+        }
+      },
+      "reply": {
+        "card": {
+          "id": 350,
+          "data": {
+            "steps": [
+              {
+                "phase": "before",
+                "step_id": "G-PRE-01",
+                "text_ar": "احسبوا كميات العزيمة بحاسبة لتدوم قبل الشراء",
+                "litadoom_tool": "quantity_calculator"
+              },
+              {
+                "phase": "during",
+                "step_id": "G-DUR-01",
+                "text_ar": "قدّموا الأكل على دفعات بدل ما ينحط كله مرة وحدة",
+                "litadoom_tool": null
+              },
+              {
+                "phase": "after",
+                "step_id": "G-AFT-05",
+                "text_ar": "قيسوا هدر العزيمة بصوتية قصيرة عشان تشوفون الفرق",
+                "litadoom_tool": "measure"
+              }
+            ],
+            "tools": {
+              "measure": null,
+              "charity_request": null,
+              "quantity_calculator": null
+            },
+            "driver": "gathering",
+            "source": "plan_library",
+            "plan_id": 350,
+            "event_id": 678
+          },
+          "type": "plan",
+          "status": "available"
+        },
+        "data": null,
+        "error": null,
+        "stage": "ready",
+        "buttons": [
+          {
+            "id": "accept_plan",
+            "label": "بطبقها",
+            "version": 1,
+            "target_id": "350"
+          },
+          {
+            "id": "remind_plan",
+            "label": "ذكّرني بكرة",
+            "version": 1,
+            "target_id": "350"
+          },
+          {
+            "id": "reject_plan",
+            "label": "ما تناسبنا",
+            "version": 1,
+            "target_id": "350"
+          }
+        ],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "هذه خطة المناسبة من مكتبة الخطوات 🌱",
+        "request_id": "ed1ca798-b593-423a-9240-8eb61c0812a5",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "accept_plan",
+      "reply": {
+        "card": {
+          "id": 350,
+          "data": {
+            "steps": [
+              {
+                "phase": "before",
+                "step_id": "G-PRE-01",
+                "text_ar": "احسبوا كميات العزيمة بحاسبة لتدوم قبل الشراء",
+                "litadoom_tool": "quantity_calculator"
+              },
+              {
+                "phase": "during",
+                "step_id": "G-DUR-01",
+                "text_ar": "قدّموا الأكل على دفعات بدل ما ينحط كله مرة وحدة",
+                "litadoom_tool": null
+              },
+              {
+                "phase": "after",
+                "step_id": "G-AFT-05",
+                "text_ar": "قيسوا هدر العزيمة بصوتية قصيرة عشان تشوفون الفرق",
+                "litadoom_tool": "measure"
+              }
+            ],
+            "tools": {
+              "measure": null,
+              "charity_request": null,
+              "quantity_calculator": null
+            },
+            "driver": "gathering",
+            "source": "plan_library",
+            "plan_id": 350,
+            "event_id": 678
+          },
+          "type": "plan",
+          "status": "available"
+        },
+        "data": null,
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "تمام 🌱 سنسأل عن التطبيق بعد المناسبة.",
+        "request_id": "512e1e2d-49ac-44d6-b087-752f70f7db19",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-10-25"
+      }
+    },
+    {
+      "route": "demo/advance-time",
+      "input": {
+        "days": 7
+      },
+      "reply": {
+        "card": null,
+        "data": {
+          "forecast": [
+            {
+              "day": "2026-11-01",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-02",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-03",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-04",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-05",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-06",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            },
+            {
+              "day": "2026-11-07",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            }
+          ]
+        },
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [
+          {
+            "id": "0d2555d8-aec7-4fe0-8e65-e53aef7c46cf",
+            "card": {
+              "id": 350,
+              "data": {
+                "steps": [
+                  {
+                    "phase": "before",
+                    "step_id": "G-PRE-01",
+                    "text_ar": "احسبوا كميات العزيمة بحاسبة لتدوم قبل الشراء",
+                    "litadoom_tool": "quantity_calculator"
+                  },
+                  {
+                    "phase": "during",
+                    "step_id": "G-DUR-01",
+                    "text_ar": "قدّموا الأكل على دفعات بدل ما ينحط كله مرة وحدة",
+                    "litadoom_tool": null
+                  },
+                  {
+                    "phase": "after",
+                    "step_id": "G-AFT-05",
+                    "text_ar": "قيسوا هدر العزيمة بصوتية قصيرة عشان تشوفون الفرق",
+                    "litadoom_tool": "measure"
+                  }
+                ],
+                "tools": {
+                  "measure": null,
+                  "charity_request": null,
+                  "quantity_calculator": null
+                },
+                "driver": "gathering",
+                "source": "plan_library",
+                "plan_id": 350,
+                "event_id": 678
+              },
+              "type": "plan",
+              "status": "available"
+            },
+            "kind": "event_reminder",
+            "due_at": "2026-10-29T13:30:00+00:00",
+            "buttons": [],
+            "reply_ar": "تذكير عزيمة اليوم 🌱 احسبوا كميات العزيمة بحاسبة لتدوم قبل الشراء"
+          },
+          {
+            "id": "58c59e64-c842-4232-9330-bbb7532c7742",
+            "card": {
+              "id": 350,
+              "data": {
+                "steps": [
+                  {
+                    "phase": "before",
+                    "step_id": "G-PRE-01",
+                    "text_ar": "احسبوا كميات العزيمة بحاسبة لتدوم قبل الشراء",
+                    "litadoom_tool": "quantity_calculator"
+                  },
+                  {
+                    "phase": "during",
+                    "step_id": "G-DUR-01",
+                    "text_ar": "قدّموا الأكل على دفعات بدل ما ينحط كله مرة وحدة",
+                    "litadoom_tool": null
+                  },
+                  {
+                    "phase": "after",
+                    "step_id": "G-AFT-05",
+                    "text_ar": "قيسوا هدر العزيمة بصوتية قصيرة عشان تشوفون الفرق",
+                    "litadoom_tool": "measure"
+                  }
+                ],
+                "tools": {
+                  "measure": null,
+                  "charity_request": null,
+                  "quantity_calculator": null
+                },
+                "driver": "gathering",
+                "source": "plan_library",
+                "plan_id": 350,
+                "event_id": 678
+              },
+              "type": "plan",
+              "status": "available"
+            },
+            "kind": "followup",
+            "due_at": "2026-10-30T10:00:00+00:00",
+            "buttons": [
+              {
+                "id": "adherence_yes",
+                "label": "طبقتها",
+                "version": 1,
+                "target_id": "350"
+              },
+              {
+                "id": "adherence_partial",
+                "label": "جزئيًا",
+                "version": 1,
+                "target_id": "350"
+              },
+              {
+                "id": "adherence_no",
+                "label": "ما طبقتها",
+                "version": 1,
+                "target_id": "350"
+              }
+            ],
+            "reply_ar": "كيف كان تطبيق خطة عزيمة؟ اكتب «طبقتها» أو «جزئيًا» أو «ما طبقتها». وبعدها نسجل قياس المناسبة."
+          },
+          {
+            "id": "848f7b71-551b-419b-8a4c-3c9215379be0",
+            "card": null,
+            "kind": "monthly",
+            "due_at": "2026-11-01T17:30:00+00:00",
+            "buttons": [],
+            "reply_ar": "ملخص الشهر السابق 🌱 1 قياس، بإجمالي 3000 جرام. المقارنة تحتاج قياسات صالحة."
+          },
+          {
+            "id": "9f27d6d0-2679-4648-8ff8-98258b2edfbf",
+            "card": null,
+            "data": {
+              "days": [
+                {
+                  "day": "2026-11-01",
+                  "level": "mid",
+                  "ratio": 1.5,
+                  "drivers": [
+                    "post_shopping"
+                  ],
+                  "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+                  "expected_kg": 2.25,
+                  "items_at_risk": [
+                    "خبز",
+                    "خضار",
+                    "فواكه"
+                  ]
+                },
+                {
+                  "day": "2026-11-02",
+                  "level": "mid",
+                  "ratio": 1.5,
+                  "drivers": [
+                    "post_shopping"
+                  ],
+                  "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+                  "expected_kg": 2.25,
+                  "items_at_risk": [
+                    "خبز",
+                    "خضار",
+                    "فواكه"
+                  ]
+                },
+                {
+                  "day": "2026-11-03",
+                  "level": "mid",
+                  "ratio": 1.5,
+                  "drivers": [
+                    "post_shopping"
+                  ],
+                  "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+                  "expected_kg": 2.25,
+                  "items_at_risk": [
+                    "خبز",
+                    "خضار",
+                    "فواكه"
+                  ]
+                },
+                {
+                  "day": "2026-11-04",
+                  "level": "mid",
+                  "ratio": 1.5,
+                  "drivers": [
+                    "post_shopping"
+                  ],
+                  "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+                  "expected_kg": 2.25,
+                  "items_at_risk": [
+                    "خبز",
+                    "خضار",
+                    "فواكه"
+                  ]
+                },
+                {
+                  "day": "2026-11-05",
+                  "level": "mid",
+                  "ratio": 1.5,
+                  "drivers": [
+                    "post_shopping"
+                  ],
+                  "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+                  "expected_kg": 2.25,
+                  "items_at_risk": [
+                    "خبز",
+                    "خضار",
+                    "فواكه"
+                  ]
+                },
+                {
+                  "day": "2026-11-06",
+                  "level": "low",
+                  "ratio": 1,
+                  "drivers": [],
+                  "reason_ar": null,
+                  "expected_kg": 1.5,
+                  "items_at_risk": []
+                },
+                {
+                  "day": "2026-11-07",
+                  "level": "low",
+                  "ratio": 1,
+                  "drivers": [],
+                  "reason_ar": null,
+                  "expected_kg": 1.5,
+                  "items_at_risk": []
+                }
+              ],
+              "household": {
+                "id": "h_1e85c106",
+                "city": "الرياض",
+                "size": 4,
+                "today": "2026-11-01"
+              },
+              "top_items": [
+                {
+                  "grams": 2000,
+                  "share": 67,
+                  "item_ar": "رز"
+                },
+                {
+                  "grams": 1000,
+                  "share": 33,
+                  "item_ar": "خبز"
+                }
+              ],
+              "last_outcome": null
+            },
+            "kind": "weekly",
+            "due_at": "2026-11-01T17:30:00+00:00",
+            "buttons": [],
+            "reply_ar": "نشرة أسبوعكم 🌱\n2026-11-01: خطر متوسط — بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف\n2026-11-02: خطر متوسط — بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف\n2026-11-03: خطر متوسط — بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف\n2026-11-04: خطر متوسط — بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف\n2026-11-05: خطر متوسط — بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف\n2026-11-06: خطر منخفض\n2026-11-07: خطر منخفض"
+          }
+        ],
+        "reply_ar": "صار تاريخ العرض 2026-11-01. الرسائل المستحقة أدناه مبنية على بيانات تجريبية.",
+        "request_id": "7c9764b2-730b-46ce-b9e7-59eb5e524d01",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-11-01"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "طبقتها",
+      "reply": {
+        "card": null,
+        "data": null,
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "سجلت الإجابة 🌱 أرسل الآن أصناف هدر هذه المناسبة وكمياتها، نصًا أو صوتًا.",
+        "request_id": "5aea2a96-fedb-4de7-9d2b-e86fe3f59cde",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-11-01"
+      }
+    },
+    {
+      "route": "measurements/voice",
+      "input": "صوتية تجريبية: 500 جرام رز و200 جرام خبز",
+      "reply": {
+        "card": {
+          "id": "a1a1cfa9-55b8-4cf7-a59f-90761d575de2",
+          "data": {
+            "items": [
+              {
+                "grams": 500,
+                "reason": "other",
+                "item_ar": "رز",
+                "unit_ar": null,
+                "category": "grains_cooked",
+                "qty_text": "500 grams",
+                "quantity": null,
+                "confidence": 0.95
+              },
+              {
+                "grams": 200,
+                "reason": "other",
+                "item_ar": "خبز",
+                "unit_ar": null,
+                "category": "bread",
+                "qty_text": "200 grams",
+                "quantity": null,
+                "confidence": 0.95
+              }
+            ],
+            "source": "voice",
+            "event_id": 678,
+            "estimated": false,
+            "transcript": "We threw away 500 grams of rice and 200 grams of bread today.",
+            "measured_on": "2026-11-01"
+          },
+          "type": "measurement",
+          "status": "draft",
+          "version": 1
+        },
+        "data": null,
+        "error": null,
+        "stage": "awaiting_measurement_confirmation",
+        "buttons": [
+          {
+            "id": "confirm_measurement",
+            "label": "صح",
+            "version": 1,
+            "target_id": "a1a1cfa9-55b8-4cf7-a59f-90761d575de2"
+          },
+          {
+            "id": "edit_measurement",
+            "label": "عدّل",
+            "version": 1,
+            "target_id": "a1a1cfa9-55b8-4cf7-a59f-90761d575de2"
+          },
+          {
+            "id": "cancel_measurement",
+            "label": "إلغاء",
+            "version": 1,
+            "target_id": "a1a1cfa9-55b8-4cf7-a59f-90761d575de2"
+          }
+        ],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "هذا القياس للمراجعة: 700 جرام بتاريخ 2026-11-01. اكتب «صح» للحفظ أو «عدّل» أو «إلغاء».",
+        "request_id": "a0a4a59f-884f-42d7-a0fe-dcfd8885ebc9",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-11-01"
+      }
+    },
+    {
+      "route": "channels/web/inbound",
+      "input": "confirm_measurement",
+      "reply": {
+        "card": {
+          "id": 2044,
+          "data": {
+            "items": [
+              {
+                "grams": 500,
+                "reason": "other",
+                "item_ar": "رز",
+                "unit_ar": null,
+                "category": "grains_cooked",
+                "qty_text": "500 grams",
+                "quantity": null,
+                "confidence": 0.95
+              },
+              {
+                "grams": 200,
+                "reason": "other",
+                "item_ar": "خبز",
+                "unit_ar": null,
+                "category": "bread",
+                "qty_text": "200 grams",
+                "quantity": null,
+                "confidence": 0.95
+              }
+            ],
+            "source": "voice",
+            "total_g": 700,
+            "event_id": 678,
+            "estimated": false,
+            "transcript": "We threw away 500 grams of rice and 200 grams of bread today.",
+            "measured_on": "2026-11-01"
+          },
+          "type": "measurement",
+          "status": "confirmed"
+        },
+        "data": null,
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [
+          {
+            "card": {
+              "data": {
+                "reward": 1,
+                "plan_id": 350,
+                "actual_g": 700,
+                "change_pct": null,
+                "created_at": "2026-10-23T02:17:44.247446+00:00",
+                "expected_g": 4200,
+                "measurement_id": 2044,
+                "prev_similar_g": null
+              },
+              "type": "outcome",
+              "status": "saved"
+            },
+            "kind": "outcome",
+            "buttons": [],
+            "reply_ar": "لا يوجد قياس سابق صالح للمقارنة؛ سجلنا هذه النتيجة كنقطة بداية."
+          }
+        ],
+        "reply_ar": "تم حفظ القياس ✅ المجموع 700 جرام.",
+        "request_id": "901a280d-8b3d-4995-b676-6c9df531ecb5",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-11-01"
+      }
+    },
+    {
+      "route": "summary",
+      "input": {},
+      "reply": {
+        "card": null,
+        "data": {
+          "to": "2026-11-01",
+          "from": "2026-10-03",
+          "total_g": 3700,
+          "measurements": 2
+        },
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "ملخص آخر 30 يومًا: 2 قياس، بإجمالي 3700 جرام. لا تعني هذه الأرقام وحدها وجود انخفاض.",
+        "request_id": "6b278981-6e8a-425e-b9d0-d9ad19d07b75",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-11-01"
+      }
+    },
+    {
+      "route": "forecast",
+      "input": {},
+      "reply": {
+        "card": null,
+        "data": {
+          "days": [
+            {
+              "day": "2026-11-01",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-02",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-03",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-04",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-05",
+              "level": "mid",
+              "ratio": 1.5,
+              "drivers": [
+                "post_shopping"
+              ],
+              "reason_ar": "بعد التسوق الكبير: الخضار والفواكه تبدأ تتلف",
+              "expected_kg": 2.25,
+              "items_at_risk": [
+                "خبز",
+                "خضار",
+                "فواكه"
+              ]
+            },
+            {
+              "day": "2026-11-06",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            },
+            {
+              "day": "2026-11-07",
+              "level": "low",
+              "ratio": 1,
+              "drivers": [],
+              "reason_ar": null,
+              "expected_kg": 1.5,
+              "items_at_risk": []
+            }
+          ],
+          "household": {
+            "id": "h_1e85c106",
+            "city": "الرياض",
+            "size": 4,
+            "today": "2026-11-01"
+          },
+          "top_items": [
+            {
+              "grams": 2500,
+              "share": 68,
+              "item_ar": "رز"
+            },
+            {
+              "grams": 1200,
+              "share": 32,
+              "item_ar": "خبز"
+            }
+          ],
+          "last_outcome": {
+            "actual_g": 700,
+            "change_pct": null,
+            "prev_similar_g": null
+          }
+        },
+        "error": null,
+        "stage": "ready",
+        "buttons": [],
+        "is_demo": true,
+        "session": {
+          "id": "REDACTED",
+          "token": "REDACTED"
+        },
+        "messages": [],
+        "reply_ar": "هذه نشرة أسرتكم للأيام السبعة القادمة 🌱",
+        "request_id": "d7bc60f2-6883-43d9-a1c2-8f4e829ec483",
+        "household_id": "h_1e85c106",
+        "effective_today": "2026-11-01"
+      }
+    }
+  ]
+}

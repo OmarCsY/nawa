@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export type RecorderProblem = 'denied' | 'missing' | 'unsupported' | 'short'
+export type RecorderProblem = 'denied' | 'missing' | 'unsupported' | 'short' | 'large'
 
 interface Options {
   onDone: (audio: Blob, seconds: number) => void
   onProblem: (problem: RecorderProblem) => void
 }
 
-export const MAX_SECONDS = 60
+export const MAX_SECONDS = 90
 const MIN_SECONDS = 1
 /** Past this, a press is a "hold to talk, release to send"; shorter is a tap that keeps recording. */
 const HOLD_MS = 600
@@ -25,7 +25,9 @@ function pickMime(): string | undefined {
  * The permission prompt can outlast a tap, so "was the finger still down?" is decided when recording actually starts.
  */
 export function useRecorder({ onDone, onProblem }: Options) {
-  const [phase, setPhase] = useState<'idle' | 'starting' | 'recording'>('idle')
+  const [phase, setPhase] = useState<'idle' | 'starting' | 'recording' | 'preview'>('idle')
+  const [preview, setPreview] = useState<{ audio: Blob; url: string; seconds: number } | null>(null)
+  const previewRef = useRef<typeof preview>(null)
   const [seconds, setSeconds] = useState(0)
   const [holding, setHolding] = useState(false)
 
@@ -63,7 +65,8 @@ export function useRecorder({ onDone, onProblem }: Options) {
         const audio = new Blob(chunks, { type: rec.mimeType || 'audio/webm' })
         if (!send) return
         if (elapsed < MIN_SECONDS || audio.size === 0) callbacks.current.onProblem('short')
-        else callbacks.current.onDone(audio, elapsed)
+        else if (audio.size > 10 * 1024 * 1024) callbacks.current.onProblem('large')
+        else { const item = { audio, url: URL.createObjectURL(audio), seconds: elapsed }; previewRef.current = item; setPreview(item); setPhase('preview') }
       }
       // chunks recorded so far are flushed by stop(); detach the stream right away so the mic light goes off
       rec.stop()
@@ -141,20 +144,25 @@ export function useRecorder({ onDone, onProblem }: Options) {
 
   const cancel = useCallback(() => {
     aborted.current = true
+    if (previewRef.current) { URL.revokeObjectURL(previewRef.current.url); previewRef.current = null; setPreview(null) }
     if (phaseRef.current === 'recording') finish(false)
     else cleanup()
   }, [cleanup, finish])
 
-  const send = useCallback(() => finish(true), [finish])
+  const send = useCallback(() => {
+    if (previewRef.current) { const item = previewRef.current; callbacks.current.onDone(item.audio, item.seconds); URL.revokeObjectURL(item.url); previewRef.current = null; setPreview(null); cleanup() }
+    else finish(true)
+  }, [finish, cleanup])
 
   useEffect(
     () => () => {
       aborted.current = true
       window.clearInterval(timer.current)
       stream.current?.getTracks().forEach((t) => t.stop())
+      if (previewRef.current) URL.revokeObjectURL(previewRef.current.url)
     },
     [],
   )
 
-  return { phase, seconds, holding, start, release, cancel, send }
+  return { phase, seconds, holding, start, release, cancel, send, preview }
 }

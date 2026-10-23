@@ -12,7 +12,7 @@ interface Delta {
 
 interface KpiNumberProps {
   label: ReactNode
-  value: number
+  value: number | null
   unit?: string
   decimals?: number
   delta?: Delta
@@ -63,7 +63,7 @@ export function KpiNumber({
   inverse = false,
   className,
 }: KpiNumberProps) {
-  const shown = useCountUp(value)
+  const shown = useCountUp(value ?? 0)
   const good = delta && (delta.goodWhen === 'down' ? delta.value < 0 : delta.value > 0)
 
   return (
@@ -81,8 +81,8 @@ export function KpiNumber({
             size === 'xl' ? 'text-6xl lg:text-7xl' : size === 'lg' ? 'text-5xl sm:text-6xl' : 'text-4xl',
           )}
         >
-          <span className="sr-only">{formatNumber(value, decimals)}</span>
-          <span aria-hidden>{formatNumber(shown, decimals)}</span>
+          <span className="sr-only">{value === null ? 'لا توجد بيانات كافية' : formatNumber(value, decimals)}</span>
+          <span aria-hidden>{value === null ? '—' : formatNumber(shown, decimals)}</span>
         </span>
         {unit && <span className={cx('text-2xl font-light', inverse ? 'text-sand/70' : 'text-muted')}>{unit}</span>}
       </p>

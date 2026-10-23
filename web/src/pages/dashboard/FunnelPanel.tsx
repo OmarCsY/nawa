@@ -12,7 +12,7 @@ interface FunnelPanelProps {
 }
 
 /** One decimal: 265 of 266 is 99.6%, not a misleading 100%. */
-const conversion = (from: FunnelRow, to: FunnelRow) => formatPercent(from.count ? to.count / from.count : 0, 1)
+const conversion = (from: FunnelRow, to: FunnelRow) => from.count ? formatPercent(to.count / from.count, 1) : '—'
 
 /** Bars start at zero width and grow once mounted. */
 function useMounted(): boolean {
@@ -77,7 +77,7 @@ export function FunnelPanel({ data, error, loading, reload, className }: FunnelP
   return (
     <Card
       eyebrow="قمع الدورة"
-      title="دورة لتدوم: القياس ← التوصية ← التطبيق ← إعادة القياس"
+      title="دورة نَوء: المناسبة ← الخطة ← التطبيق ← إعادة القياس"
       className={className}
       action={
         stages.length > 1 &&

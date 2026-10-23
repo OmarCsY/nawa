@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { BackstagePanel } from './chat/BackstagePanel'
-import { useChat } from './chat/chatStore'
+import { chat, useChat } from './chat/chatStore'
 import { Composer } from './chat/Composer'
 import { DemoControls } from './chat/DemoControls'
 import { MessageList } from './chat/MessageList'
@@ -34,13 +34,14 @@ function useFullScreenOnPhones() {
 
 /** The web version of the WhatsApp bot: same engine, same flow, in a phone on the page. */
 export function ChatPage() {
-  const { messages, typing, today, turn, toast } = useChat()
+  const { messages, typing, today, turn, toast, isDemo } = useChat()
+  useEffect(() => { chat.initialize() }, [])
   useFullScreenOnPhones()
 
   return (
     <div className="mx-auto flex w-full flex-col max-md:h-[var(--app-h,100dvh)] md:max-w-[25.75rem] lg:grid lg:max-w-none lg:grid-cols-[25.75rem_minmax(0,27rem)] lg:items-start lg:justify-center lg:gap-10">
       <div className="flex min-h-0 flex-1 flex-col md:flex-none">
-        <DemoControls today={today} busy={typing} />
+        {isDemo && <DemoControls today={today} busy={typing} />}
         <PhoneFrame>
           <ChatHeader typing={typing} />
           <MessageList messages={messages} typing={typing} />

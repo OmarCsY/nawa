@@ -1,0 +1,42 @@
+[
+  {
+    "workflow": "Noo Engine v1",
+    "published": true,
+    "supabase_urls": [
+      "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_prepare",
+      "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_finish"
+    ],
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate",
+      "timeSavedMode": "fixed",
+      "timezone": "Asia/Riyadh",
+      "saveDataErrorExecution": "none",
+      "saveDataSuccessExecution": "none",
+      "saveManualExecutions": false,
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    }
+  },
+  {
+    "workflow": "Noo Delivery v1",
+    "published": true,
+    "supabase_urls": [
+      "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_schedule",
+      "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_claim",
+      "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_delivery_check",
+      "https://xjegeggcsemvytfnvzez.supabase.co/rest/v1/rpc/noo_engine_delivery_ack"
+    ],
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate",
+      "timeSavedMode": "fixed",
+      "timezone": "Asia/Riyadh",
+      "saveDataErrorExecution": "none",
+      "saveDataSuccessExecution": "none",
+      "saveManualExecutions": false,
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    }
+  }
+]

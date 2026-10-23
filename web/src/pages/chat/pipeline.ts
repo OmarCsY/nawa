@@ -73,7 +73,7 @@ export function buildPipeline(turn: Turn): PipelineStep[] {
   // ③ forecast
   let forecast: PipelineStep
   if (event) {
-    forecast = { title: 'تحديث توقع الأسبوع', detail: `${weekdayLong(event.starts_on)} ← مرتفع`, applies: true }
+    forecast = { title: 'تحديث توقع الأسبوع', detail: event.status === 'confirmed' ? 'تُحتسب المناسبة المؤكدة في توقع الأسبوع' : 'ننتظر التأكيد قبل احتساب المناسبة', applies: event.status === 'confirmed' }
   } else if (link) {
     forecast = { title: 'تحديث توقع الأسبوع', detail: link.description, applies: true }
   } else if (plan) {
@@ -81,11 +81,11 @@ export function buildPipeline(turn: Turn): PipelineStep[] {
   } else if (result) {
     forecast = {
       title: 'تحديث توقع الأسبوع',
-      detail: `مقارنة بآخر عزيمة ${kg(result.previous_g)} ← أقل ${formatNumber(result.less_pct, 0)}%`,
+      detail: result.change_pct === null || result.previous_g === null ? 'لا توجد مقارنة سابقة كافية.' : `التغير ${formatNumber(result.change_pct, 1)}% مقابل ${kg(result.previous_g)}`,
       applies: true,
     }
   } else if (items) {
-    forecast = { title: 'تحديث توقع الأسبوع', detail: 'تُضاف القراءة لمعدل هدر بيتكم', applies: true }
+    forecast = { title: 'تحديث توقع الأسبوع', detail: items.status === 'confirmed' ? 'تُضاف القراءة المؤكدة لمعدل هدر بيتكم' : 'ننتظر التأكيد قبل احتساب القراءة', applies: items.status === 'confirmed' }
   } else {
     forecast = { title: 'تحديث توقع الأسبوع', detail: 'ما تغيّر شي في توقع الأسبوع', applies: false }
   }
@@ -110,9 +110,9 @@ export function buildPipeline(turn: Turn): PipelineStep[] {
 
   // ⑤ database
   let save: PipelineStep
-  if (items) save = { title: 'الحفظ في قاعدة البيانات', detail: 'حُفظ القياس بأصنافه وأسبابه', applies: true }
+  if (items) save = { title: 'الحفظ في قاعدة البيانات', detail: items.status === 'confirmed' ? 'حُفظ القياس بأصنافه وأسبابه' : 'مسودة؛ ننتظر التأكيد قبل الحفظ', applies: true }
   else if (result) save = { title: 'الحفظ في قاعدة البيانات', detail: 'حُفظت النتيجة، وظهرت في البث الحي على لوحة لتدوم', applies: true }
-  else if (event) save = { title: 'الحفظ في قاعدة البيانات', detail: 'حُفظت المناسبة وتاريخها', applies: true }
+  else if (event) save = { title: 'الحفظ في قاعدة البيانات', detail: event.status === 'confirmed' ? 'حُفظت المناسبة وتاريخها' : 'مسودة؛ ننتظر تأكيد المناسبة', applies: true }
   else if (plan) save = { title: 'الحفظ في قاعدة البيانات', detail: 'حُفظت الخطة المرسلة لمتابعة تطبيقها', applies: true }
   else save = { title: 'الحفظ في قاعدة البيانات', detail: 'ما فيه شي جديد للحفظ', applies: false }
 

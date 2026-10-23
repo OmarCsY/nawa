@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { fetchLive, LIVE_LIMIT, type LiveRow } from '../../lib/dashboard'
+import { useEffect, useRef, useState } from 'react'
+import { dashboardScope, fetchLive, LIVE_LIMIT, type LiveRow } from '../../lib/dashboard'
 import { subscribeLiveFeed, type LiveStatus } from '../../lib/supabase'
 import { useAsync } from '../../lib/useAsync'
 
@@ -20,10 +20,12 @@ export function useLiveFeed() {
   const [rows, setRows] = useState<LiveRow[]>([])
   const [fresh, setFresh] = useState<ReadonlySet<number>>(new Set())
   const [status, setStatus] = useState<LiveStatus>('connecting')
+  const currentScope = useRef(dashboardScope())
+  useEffect(() => { const changed = () => { if (currentScope.current !== dashboardScope()) { currentScope.current = dashboardScope(); setRows([]); setFresh(new Set()) } }; window.addEventListener('nawa:data-changed', changed); return () => window.removeEventListener('nawa:data-changed', changed) }, [])
 
   // Merge rather than replace: a realtime row may land before the initial fetch resolves.
   useEffect(() => {
-    if (initial.data) setRows((prev) => merge(prev, initial.data!))
+    if (initial.data) setRows((prev) => merge(prev.filter(r => (r.is_demo ?? true) === (dashboardScope() === 'demo')), initial.data!))
   }, [initial.data])
 
   useEffect(() => {
@@ -31,9 +33,10 @@ export function useLiveFeed() {
     try {
       unsubscribe = subscribeLiveFeed<LiveRow>((row) => {
         const clean = { ...row, grams: Number(row.grams) }
+        if ((clean.is_demo ?? true) !== (dashboardScope() === 'demo')) return
         setRows((prev) => merge(prev, [clean]))
-        setFresh((prev) => new Set(prev).add(clean.id))
-      }, setStatus)
+        setFresh((prev) => new Set([...prev, clean.id].slice(-LIVE_LIMIT)))
+      }, status => { setStatus(status); if (status === 'live') initial.reload() })
     } catch {
       setStatus('offline') // missing Supabase config; the panel shows the fetch error
     }

@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { NAV } from '../../lib/nav'
-import { BackIcon, DotsIcon, PhoneIcon, VerifiedBadge } from './icons'
+import { BackIcon, DotsIcon, PhoneIcon } from './icons'
 
 /** Full-screen on a phone; on desktop it becomes a phone on the table (warm ink bezel, no cold greys). */
 export function PhoneFrame({ children }: { children: ReactNode }) {
@@ -41,10 +41,10 @@ export function ChatHeader({ typing }: { typing: boolean }) {
       <div className="min-w-0 flex-1 leading-tight">
         <h1 className="flex items-center gap-1.5 text-[17px] font-medium">
           نَوء
-          <VerifiedBadge className="size-4 shrink-0 text-white" />
+          <span className="text-[10px] text-white/75">نموذج تجريبي</span>
         </h1>
         <p className="truncate text-[12.5px] text-white/80" aria-live="polite">
-          {typing ? 'يكتب…' : 'نشرة لتدوم لبيتك'}
+          {typing ? 'يكتب…' : 'مساعد توقيت هدر الغذاء للأسرة'}
         </p>
       </div>
       <span aria-hidden className="flex items-center gap-1 text-white">

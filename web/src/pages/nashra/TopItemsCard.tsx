@@ -6,7 +6,7 @@ export function TopItemsCard({ items }: { items: NashraItem[] }) {
   const max = Math.max(...items.map((i) => i.share), 1)
 
   return (
-    <Card eyebrow="آخر 30 يومًا" title="أكثر ما ينهدر عندكم">
+    <Card eyebrow="آخر 60 يومًا" title="أكثر ما ينهدر عندكم">
       {items.length === 0 ? (
         <EmptyState className="border-none py-6" title="لا توجد قياسات بعد" description="أرسلوا أول قياس لنوء وتظهر هنا أكثر الأصناف هدرًا." />
       ) : (

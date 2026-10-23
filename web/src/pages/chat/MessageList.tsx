@@ -10,9 +10,9 @@ function Body({ m }: { m: ChatMessage }) {
     case 'voice':
       return m.voice ? <VoiceNote voice={m.voice} /> : null
     case 'items':
-      return m.items ? <ItemsCard items={m.items} /> : null
+      return m.items ? <>{m.text && <p className="mb-2 text-[14px]">{m.text}</p>}<ItemsCard items={m.items} /></> : null
     case 'event':
-      return m.event ? <EventCard event={m.event} /> : null
+      return m.event ? <>{m.text && <p className="mb-2 text-[14px]">{m.text}</p>}<EventCard event={m.event} /></> : null
     case 'plan':
       return m.plan ? <PlanCard plan={m.plan} lead={m.text} /> : null
     case 'result':

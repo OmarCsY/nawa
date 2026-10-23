@@ -12,7 +12,7 @@ interface ErrorStateProps {
 
 function messageOf(error: unknown): string | null {
   if (!error) return null
-  if (error instanceof Error) return error.message
+  if (error instanceof Error) return /[\u0600-\u06ff]/.test(error.message) ? error.message : 'تعذّر تحميل البيانات. تحقق من الاتصال وحاول مرة أخرى.'
   if (typeof error === 'string') return error
   if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') return error.message
   return null

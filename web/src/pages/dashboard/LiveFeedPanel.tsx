@@ -33,7 +33,7 @@ function FeedRow({ row, isFresh, now }: { row: LiveRow; isFresh: boolean; now: n
           <span aria-hidden className={cx('size-2 shrink-0 rounded-full', isFresh ? 'bg-saffron' : 'bg-line')} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[15px] leading-snug text-ink">
-              <span className="font-bold">{row.city}</span>
+              <span className="font-bold">{row.city || (row.is_demo ? 'قياس تجريبي' : 'قياس مجهّل')}</span>
               <span className="mx-1.5 text-muted">·</span>
               {row.item_ar}
               <span className="mx-1.5 text-muted">·</span>
