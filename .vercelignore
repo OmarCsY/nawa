@@ -1,0 +1,7 @@
+# Never upload local secrets or build artifacts from CLI deploys
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/dist
+qr

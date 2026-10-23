@@ -9,10 +9,10 @@
 
 | الصفحة | الرابط |
 |---|---|
-| المحادثة | _بعد النشر_ |
-| لوحة لتدوم | _بعد النشر_ |
-| نشرة أسرة | _بعد النشر_ |
-| بوابة الـ API | _بعد النشر_ |
+| المحادثة | [nawa-litadoom.vercel.app/](https://nawa-litadoom.vercel.app/) |
+| لوحة لتدوم | [nawa-litadoom.vercel.app/dashboard](https://nawa-litadoom.vercel.app/dashboard) |
+| نشرة أسرة | [nawa-litadoom.vercel.app/n/h_show](https://nawa-litadoom.vercel.app/n/h_show) |
+| بوابة الـ API | [nawa-litadoom.vercel.app/docs](https://nawa-litadoom.vercel.app/docs) |
 
 ## المحتوى
 
