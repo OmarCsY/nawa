@@ -9,3 +9,5 @@ Supabase target: Omar's `xjegeggcsemvytfnvzez`. These exports contain no referen
 The engine and delivery workflows use Riyadh time and do not save successful, failed, or manual execution payloads. The outbox records delivery only after WAHA acknowledgement. Unknown outcomes are not blindly resent. Proactive delivery observes consent, stop, quiet hours, and a two-message weekly cap.
 
 Canonical API contract and verified limitations are in `../docs/engine/`. No frontend code is changed by this handoff.
+
+Audio retention is implemented by the deployed, reviewed external hook in server/noo-audio-cleanup.cjs; see server/README.md. The SQL weekly JSON cast fix is already applied; its reviewed statement is in sql/.

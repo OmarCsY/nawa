@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-10-23T02:25:49.692Z",
+  "n8n_version": "2.21.0",
+  "deployed": true,
+  "scope": [
+    "Noo Engine v1",
+    "No'o WhatsApp adapter"
+  ],
+  "post_execution": true,
+  "interrupted_ttl_minutes": 60,
+  "sweep_minutes": 5,
+  "files_before_production_audio_tests": 0,
+  "files_after_success_and_failure_tests": 0,
+  "live_filesystem_ttl_probe": {
+    "stale_deleted": true,
+    "fresh_preserved": true,
+    "completion_deleted_fresh": true
+  },
+  "local_guard_tests": {
+    "unrelated_workflow_preserved": true,
+    "traversal_rejected": true
+  }
+}

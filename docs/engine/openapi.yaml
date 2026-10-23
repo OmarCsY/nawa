@@ -981,7 +981,7 @@
     "/measurements/voice": {
       "post": {
         "operationId": "measurements_voice",
-        "description": "Actual Opus packet/container duration validated; <=10 MiB and <=90 seconds. Gemini transcription, preview before confirmation. WAV PCM also accepted.",
+        "description": "Multipart audio + metadata JSON; actual Gemini transcription. Supported: WebM/Opus, Ogg/Opus, PCM WAV, AAC-LC in MP4/M4A (standard or fragmented, demuxed in memory). Server validates content, duration <=90 seconds, size <=10 MiB. No browser/server API key is required beyond the scoped session.",
         "requestBody": {
           "required": true,
           "content": {

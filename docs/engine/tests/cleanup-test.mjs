@@ -1,0 +1,24 @@
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import vm from 'node:vm';
+import {createRequire} from 'node:module';
+import assert from 'node:assert/strict';
+const require=createRequire(import.meta.url);
+const root=await fs.mkdtemp(path.join(os.tmpdir(),'noo-cleanup-'));
+const source=(await fs.readFile(new URL('../../../n8n/server/noo-audio-cleanup.cjs', import.meta.url),'utf8')).replace("'/home/node/.n8n/storage/workflows'",JSON.stringify(root));
+const context={require,module:{exports:{}},console,setInterval:()=>({unref(){}})};
+vm.createContext(context);vm.runInContext(source,context);
+const wf='x5wO5L3IYIH0nGJB';
+async function make(id,ex,old=false){const dir=path.join(root,id,'executions',ex,'binary_data');await fs.mkdir(dir,{recursive:true});await fs.writeFile(path.join(dir,'audio'),'synthetic');if(old)await fs.utimes(dir,new Date(0),new Date(0));return dir;}
+const immediate=await make(wf,'1'),stale=await make(wf,'2',true),fresh=await make(wf,'3'),other=await make('unrelated','1',true);
+await context.module.exports.workflow.postExecute[0]({}, {id:wf}, '1');
+assert.equal(await fs.access(immediate).then(()=>true,()=>false),false);
+await context.module.exports.workflow.postExecute[0]({}, {id:'unrelated'}, '1');
+await context.module.exports.workflow.postExecute[0]({}, {id:wf}, '../../unrelated');
+await context.module.exports.n8n.ready[0]();
+assert.equal(await fs.access(stale).then(()=>true,()=>false),false);
+assert.equal(await fs.access(fresh).then(()=>true,()=>false),true);
+assert.equal(await fs.access(other).then(()=>true,()=>false),true);
+await fs.rm(root,{recursive:true,force:true});
+console.log('PASS: completion cleanup, 60-minute TTL, fresh-file retention, workflow allowlist, traversal rejection');

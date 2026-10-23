@@ -1,0 +1,19 @@
+{
+  "timestamp": "2026-10-23T02:21:02.707Z",
+  "project_ref": "xjegeggcsemvytfnvzez",
+  "channel": "real user WhatsApp via WAHA",
+  "voice_measurement": {
+    "source": "voice",
+    "total_g": 500,
+    "finalized": true,
+    "items": [
+      {
+        "category": "bread",
+        "grams": 500
+      }
+    ]
+  },
+  "replies_sent": 7,
+  "provider_acknowledgements": 7,
+  "live_feed_contains_voice": true
+}

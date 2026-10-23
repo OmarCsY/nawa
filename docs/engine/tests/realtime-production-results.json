@@ -1,0 +1,8 @@
+{
+  "timestamp": "2026-10-23T02:06:40.296Z",
+  "status": "SUBSCRIBED",
+  "origin": "https://nawa-litadoom.vercel.app",
+  "realtime_insert_received": true,
+  "public_live_view_contains_measurement": true,
+  "grams": 123
+}

@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-10-23T02:19:59.992Z",
+  "results": [
+    {
+      "name": "91-second AAC in M4A",
+      "status": 400,
+      "error_code": "AUDIO_TOO_LONG",
+      "passed": true
+    },
+    {
+      "name": "truncated MP4",
+      "status": 400,
+      "error_code": "INVALID_AUDIO",
+      "passed": true
+    },
+    {
+      "name": "oversized file",
+      "status": 413,
+      "error_code": "AUDIO_TOO_LARGE",
+      "passed": true
+    }
+  ]
+}
