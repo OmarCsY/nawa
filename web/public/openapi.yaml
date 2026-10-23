@@ -1,0 +1,1550 @@
+openapi: 3.1.0
+
+info:
+  title: "Nawa Engine API · واجهة محرك نَوء"
+  version: "1.0.0"
+  summary: "Nawa forecasts household food-waste seasons and sends the right plan · نَوء يتوقع مواسم هدر الطعام في البيت ويرسل الخطة المناسبة"
+  description: |
+    **Nawa Engine** predicts when and why a household's food waste will spike, sends a 3-step plan chosen from the
+    Litadoom plan library, then measures the result. WhatsApp, the web chat, the Litadoom dashboard and the Litadoom
+    app all call the same endpoints.
+
+    **محرك نَوء** يتوقع متى يرتفع هدر الطعام في بيتك ولماذا، ويرسل خطة من 3 خطوات من مكتبة لتدوم، ثم يقيس الأثر.
+    كل وظيفة في المحرك نقطة مستقلة: البوت على واتساب، ونسخته على الويب، ولوحة لتدوم، وتطبيق لتدوم كلها تستدعي النقاط نفسها.
+
+    ### Principles · مبادئ
+
+    | English | العربية |
+    |---|---|
+    | One channel today (WhatsApp), any channel tomorrow: channels only translate messages. | قناة واحدة اليوم، أي قناة غدًا |
+    | Every forecast and plan carries a plain-language reason (`reason_ar`). | كل قرار له سبب مكتوب |
+    | The language model picks and rewords library steps; it never invents advice. | لا نصيحة من خارج المكتبة |
+    | Households are random ids (`h_xxxx`). Phone numbers are salted-hashed at the edge and never reach a model. Insights return anonymised aggregates only. | الخصوصية افتراضيًا |
+
+    ### Using this page · الاستخدام
+
+    1. Click **Authorize**: the showcase key `nawa_demo_key_2026` is already entered.
+    2. Open any endpoint and press **Try it out**: every one ships with a ready example from the demo household `h_demo`.
+
+    اضغطوا **Authorize** (المفتاح التجريبي مفعّل مسبقًا)، ثم افتحوا أي نقطة واضغطوا **Try it out**: فيها مثال جاهز من الأسرة التجريبية `h_demo`.
+
+    ### The demo story · قصة العرض
+
+    A voice note about what was thrown away, then "Thursday we have a gathering of 14", Thursday turns red, the plan arrives two days
+    ahead, the household taps "I'll apply it", and after the gathering a second voice note brings the result: 0.9 kg against 2.4 kg
+    last time, 62% less.
+
+    صوتية بالي انرمى، ثم «الخميس عندنا عزيمة 14 نفر»، فيتحول الخميس للأحمر، وتصل الخطة قبلها بيومين، وبعد العزيمة صوتية ثانية
+    تجيب النتيجة: «هدر العزيمة 0.9 كجم، عزيمتكم الماضية 2.4 كجم: أقل 62%».
+
+    ### Errors · الأخطاء
+
+    Every error has the same `Error` shape, with Arabic and English messages and a stable machine-readable `code`.
+
+    كل خطأ يرجع بنفس الشكل `Error` مع رسالة بالعربية وبالإنجليزية ورمز ثابت يمكن برمجته.
+  contact:
+    name: "Injaz team · فريق إنجاز"
+    email: "engine@nawa.example"
+  license:
+    name: "Hackathon demo · نموذج أولي للعرض"
+    identifier: "LicenseRef-Nawa-Demo"
+
+servers:
+  - url: "https://engine.nawa.example"
+    description: "Nawa Engine · n8n webhooks"
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: Households
+    description: "Household registration (minimum data: size, city, consent). · الأسر"
+  - name: Measurements
+    description: "Waste measurements, by voice or structured. · القياس"
+  - name: Events
+    description: "Turn a sentence into an event. · المناسبات"
+  - name: Forecast
+    description: "The 7-day risk forecast with a reason for every day. · النشرة"
+  - name: Plans
+    description: "3-step plans from the Litadoom library, and whether they were applied. · الخطط"
+  - name: Outcomes
+    description: "Post-event measurement compared with the last similar event. · النتائج"
+  - name: Insights
+    description: "Anonymised aggregates for Litadoom (no household ids). · المؤشرات"
+  - name: Channels
+    description: "Inbound messages from WhatsApp and the web chat. · القنوات"
+  - name: Demo
+    description: "Demo-only helpers. · العرض"
+
+paths:
+  /v1/households:
+    post:
+      tags: [Households]
+      operationId: registerHousehold
+      summary: "Register a household · تسجيل أسرة"
+      description: |
+        يسجّل أسرة بأقل بيانات ممكنة: عدد الأفراد والمدينة وموافقة صريحة على الرسائل.
+        رقم الجوال (إن وُجد) يُحوَّل فورًا إلى بصمة SHA-256 مع ملح ولا يُخزَّن ولا يمر لأي نموذج لغوي.
+
+        Registers a household with the minimum data: size, city and explicit consent to messages.
+        A phone number, if sent, is salted-hashed immediately; it is never stored and never reaches a language model.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterHousehold"
+            examples:
+              demo:
+                summary: "The demo household · أسرة العرض"
+                value:
+                  size: 6
+                  city: "بريدة"
+                  region: "القصيم"
+                  channel: "web"
+                  consent: true
+      responses:
+        "201":
+          description: "Household created. · تم تسجيل الأسرة"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Household"
+              examples:
+                demo:
+                  value:
+                    household_id: "h_demo"
+                    cohort: "nawa"
+                    size: 6
+                    city: "بريدة"
+                    region: "القصيم"
+                    channel: "web"
+                    created_at: "2026-10-25T08:12:44+03:00"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409":
+          description: "This phone is already registered. · الجوال مسجّل من قبل"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              examples:
+                duplicate:
+                  value:
+                    error:
+                      code: "household_exists"
+                      message_ar: "هذا الرقم مسجّل من قبل. ارجعوا لمحادثتكم القديمة."
+                      message_en: "This phone number is already registered."
+                      request_id: "req_8f31c2"
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/measurements/voice:
+    post:
+      tags: [Measurements]
+      operationId: measureByVoice
+      summary: "Measure waste from a voice note · قياس الهدر بالصوت"
+      description: |
+        صوتية قصيرة ← نص عربي (Whisper) ← أصناف وكميات وأسباب بمخطط JSON ثابت. قاموس الوحدات الشعبية («نص قدر»، «ربطة»، «حبة»)
+        يحوّل الكميات إلى جرامات تقديرية. القياس يبقى بانتظار تأكيد الأسرة (صح / عدّل)، والصوتية تُحذف بعد التحويل.
+
+        A short voice note becomes Arabic text (Whisper), then items, quantities and reasons in a fixed JSON schema.
+        A dictionary of colloquial units ("half a pot", "a bag", "one head") converts quantities to estimated grams.
+        The measurement stays pending until the household confirms (yes / edit); the audio is deleted after transcription.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VoiceByUrl"
+            examples:
+              byUrl:
+                summary: "Audio URL · رابط صوتية"
+                value:
+                  household_id: "h_demo"
+                  audio_url: "https://media.nawa.example/tmp/9c1e.ogg"
+                  measured_on: "2026-10-25"
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/VoiceUpload"
+      responses:
+        "200":
+          description: "Extracted items, pending confirmation. · الأصناف المستخرجة، بانتظار التأكيد"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoiceMeasurement"
+              examples:
+                demo:
+                  value:
+                    measurement_id: 5021
+                    status: "pending_confirmation"
+                    transcript: "رمينا اليوم نص قدر رز، وربطة خبز إلا ربع، وخسة خربت بالثلاجة"
+                    items:
+                      - { item_ar: "رز مطبوخ", category: "grains_cooked", qty_text: "نص قدر", grams: 600, reason: "overcooked", confidence: 0.8 }
+                      - { item_ar: "خبز", category: "bakery", qty_text: "ربطة إلا ربع", grams: 300, reason: "spoiled", confidence: 0.75 }
+                      - { item_ar: "خس", category: "vegetables_leafy", qty_text: "حبة", grams: 150, reason: "forgotten", confidence: 0.7 }
+                    total_g: 1050
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "413":
+          description: "Audio too long (60 s limit). · الصوتية أطول من اللازم (الحد 60 ثانية)"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              examples:
+                tooLong:
+                  value:
+                    error:
+                      code: "audio_too_long"
+                      message_ar: "الصوتية طويلة. سجّلوا أقل من دقيقة."
+                      message_en: "The voice note is too long. Keep it under one minute."
+                      request_id: "req_2a90d7"
+        "422":
+          description: "The audio could not be understood. · ما قدرنا نفهم الصوتية"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              examples:
+                unclear:
+                  value:
+                    error:
+                      code: "audio_unintelligible"
+                      message_ar: "ما سمعت الصوتية زين. جرّبوا مرة ثانية أو اكتبوا اللي انرمى."
+                      message_en: "Could not understand the audio. Try again or type what was thrown away."
+                      request_id: "req_77be10"
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/measurements:
+    post:
+      tags: [Measurements]
+      operationId: createMeasurement
+      summary: "Save a structured measurement · حفظ قياس منظم"
+      description: |
+        قياس جاهز المعالم من أداة لتدوم أو من إدخال يدوي أو بعد تأكيد صوتية. يُحفظ كما هو ويغذّي معاملات الأسرة.
+
+        A ready-made measurement from a Litadoom tool, manual entry, or a confirmed voice note.
+        Stored as sent; it updates the household's own multipliers.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMeasurement"
+            examples:
+              litadoomTool:
+                summary: "From the Litadoom measure tool · من أداة القياس في لتدوم"
+                value:
+                  household_id: "h_demo"
+                  source: "litadoom_tool"
+                  measured_on: "2026-10-25"
+                  items:
+                    - { item_ar: "رز مطبوخ", category: "grains_cooked", grams: 600, reason: "overcooked" }
+                    - { item_ar: "خبز", category: "bakery", grams: 300, reason: "spoiled" }
+                    - { item_ar: "خس", category: "vegetables_leafy", grams: 150, reason: "forgotten" }
+              afterEvent:
+                summary: "After the gathering · بعد العزيمة"
+                value:
+                  household_id: "h_demo"
+                  source: "voice"
+                  measured_on: "2026-10-30"
+                  event_id: 77
+                  transcript: "الحمدلله ما انرمى إلا شوية: نص صحن رز وشوية لحم وشوية خبز يابس"
+                  items:
+                    - { item_ar: "رز مطبوخ", category: "grains_cooked", grams: 400, reason: "plate_leftover" }
+                    - { item_ar: "لحم", category: "meat", grams: 300, reason: "overcooked" }
+                    - { item_ar: "خبز", category: "bakery", grams: 200, reason: "spoiled" }
+      responses:
+        "201":
+          description: "Saved. · تم الحفظ"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeasurementSaved"
+              examples:
+                demo:
+                  value: { measurement_id: 5022, total_g: 1050, items_saved: 3 }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/events/parse:
+    post:
+      tags: [Events]
+      operationId: parseEvent
+      summary: "Parse an event from a sentence · فهم المناسبة من جملة"
+      description: |
+        جملة عادية ← مناسبة: النوع والتاريخ (ميلادي وهجري) والعدد والمدة. إذا نقص التاريخ يرجع سؤال واحد فقط في `question_ar`.
+        المناسبة تبقى غير مؤكدة (`confirmed: false`) حتى تضغط الأسرة «تمام».
+
+        An everyday sentence becomes an event: type, date (Gregorian and Hijri), guests and duration.
+        If the date is missing, exactly one follow-up question comes back in `question_ar`.
+        The event stays unconfirmed (`confirmed: false`) until the household taps "تمام".
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParseEventRequest"
+            examples:
+              gathering:
+                summary: "A gathering · عزيمة"
+                value:
+                  household_id: "h_demo"
+                  text: "الخميس عندنا عزيمة 14 نفر"
+                  today: "2026-10-25"
+              missingDate:
+                summary: "No date · بلا تاريخ"
+                value:
+                  household_id: "h_demo"
+                  text: "عندنا عزيمة كبيرة"
+                  today: "2026-10-25"
+      responses:
+        "200":
+          description: "The parsed event. · المناسبة المفهومة"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ParsedEvent"
+              examples:
+                gathering:
+                  summary: "A gathering · عزيمة"
+                  value:
+                    event_id: 77
+                    type: "gathering"
+                    starts_on: "2026-10-29"
+                    starts_on_hijri: "18 جمادى الأولى 1448 هـ"
+                    ends_on: null
+                    guests: 14
+                    confirmed: false
+                    confirmation_ar: "سجّلت: عزيمة · الخميس 29 أكتوبر · 14 شخص"
+                    question_ar: null
+                missingDate:
+                  summary: "One follow-up question · سؤال واحد"
+                  value:
+                    event_id: null
+                    type: "gathering"
+                    starts_on: null
+                    starts_on_hijri: null
+                    ends_on: null
+                    guests: null
+                    confirmed: false
+                    confirmation_ar: null
+                    question_ar: "أي يوم العزيمة؟"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/households/{id}/forecast:
+    get:
+      tags: [Forecast]
+      operationId: getForecast
+      summary: "7-day risk forecast · نشرة الأسبوع"
+      description: |
+        مستوى الخطر لكل يوم من 7 أيام، مع السبب بلغة بسيطة والأصناف المعرّضة. الأيام ذات الخطر المتوسط تظهر في النشرة فقط
+        بدون رسالة مستقلة، والمرتفعة تُرسل لها خطة قبلها بيومين.
+
+        Risk level for each of 7 days, with a plain-language reason and the items at risk. Medium days appear in the
+        bulletin only (no standalone message); high days get a plan two days ahead.
+      parameters:
+        - $ref: "#/components/parameters/HouseholdId"
+        - name: from
+          in: query
+          description: "First day of the bulletin (default: today). · أول يوم في النشرة (الافتراضي اليوم)"
+          schema: { type: string, format: date }
+          example: "2026-10-25"
+      responses:
+        "200":
+          description: "The 7-day forecast. · نشرة 7 أيام"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Forecast"
+              examples:
+                demo:
+                  summary: "After the gathering was mentioned · الأسرة بعد ذكر العزيمة"
+                  value:
+                    household_id: "h_demo"
+                    model_version: "risk-v1"
+                    days:
+                      - { date: "2026-10-25", level: "low", expected_kg: 0.7, drivers: [], reason_ar: "يوم عادي على معدل بيتكم", items_at_risk: [] }
+                      - { date: "2026-10-26", level: "low", expected_kg: 0.8, drivers: [], reason_ar: "يوم عادي على معدل بيتكم", items_at_risk: [] }
+                      - { date: "2026-10-27", level: "low", expected_kg: 0.7, drivers: [], reason_ar: "يوم عادي على معدل بيتكم", items_at_risk: [] }
+                      - { date: "2026-10-28", level: "low", expected_kg: 0.8, drivers: [], reason_ar: "يوم عادي على معدل بيتكم", items_at_risk: [] }
+                      - date: "2026-10-29"
+                        level: "high"
+                        expected_kg: 2.1
+                        drivers: ["gathering"]
+                        reason_ar: "عزيمة 14 شخص. آخر 3 عزائم = 58% من هدر شهركم"
+                        items_at_risk: ["رز مطبوخ", "خبز"]
+                      - date: "2026-10-30"
+                        level: "mid"
+                        expected_kg: 1.1
+                        drivers: ["gathering_after"]
+                        reason_ar: "بواقي العزيمة: اليوم الثاني يرفع الهدر"
+                        items_at_risk: ["رز مطبوخ", "لحوم"]
+                      - { date: "2026-10-31", level: "low", expected_kg: 0.8, drivers: [], reason_ar: "يوم عادي على معدل بيتكم", items_at_risk: [] }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/plans/generate:
+    post:
+      tags: [Plans]
+      operationId: generatePlan
+      summary: "Generate a 3-step plan · توليد خطة من 3 خطوات"
+      description: |
+        يسترجع المحرك 8 إلى 12 خطوة مرشحة من مكتبة لتدوم، ويرتبها بالتعلم التكيفي لهذه الأسرة، ويختار 3 خطوات من مراحل مختلفة
+        (قبل، أثناء، بعد). النموذج اللغوي يعيد صياغتها بلهجة الأسرة وبأسماء الأيام الفعلية، ولا يضيف أي معلومة من خارج المكتبة.
+        كل `step_id` يرجع موجودًا في المكتبة.
+
+        The engine retrieves 8–12 candidate steps from the Litadoom library, ranks them with per-household adaptive
+        learning, and picks 3 from different phases (before, during, after). The language model rewords them in the
+        household's dialect with real weekday names and adds no information beyond the library. Every `step_id`
+        exists in the library.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratePlan"
+            examples:
+              gathering:
+                summary: "The gathering plan · خطة العزيمة"
+                value: { household_id: "h_demo", event_id: 77 }
+      responses:
+        "201":
+          description: "The plan. · الخطة الجاهزة"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Plan"
+              examples:
+                gathering:
+                  value:
+                    plan_id: "pl_301"
+                    send_at: "2026-10-27T20:30:00+03:00"
+                    steps:
+                      - { step_id: "G-PRE-02", phase: "before", text_ar: "الأربعاء: فضّوا رف بالثلاجة وجهّزوا علب للبواقي" }
+                      - { step_id: "G-DUR-01", phase: "during", text_ar: "بعد العشاء: الباقي يدخل الثلاجة بسرعة، والرز يتقسّم ويتجمّد" }
+                      - { step_id: "G-AFT-03", phase: "after", text_ar: "الجمعة: غداكم من بواقي العزيمة بدل طبخ جديد" }
+                    litadoom_tools:
+                      - { tool: "quantity_calculator", url: "https://litadoom.example/tools/quantity-calculator" }
+                    source: "plan_library_v1"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/plans/{id}/adherence:
+    post:
+      tags: [Plans]
+      operationId: recordAdherence
+      summary: "Record plan adherence · تسجيل تطبيق الخطة"
+      description: |
+        الأسرة تجيب عن «طبقتوا الخطة؟»: طبقتها، أو جزئيًا، أو لا. الإجابة تدخل في مكافأة التعلم بعد قياس ما بعد المناسبة.
+
+        The household answers "did you apply the plan?": yes, partly, or no. The answer feeds the learning reward
+        once the post-event measurement arrives.
+      parameters:
+        - $ref: "#/components/parameters/PlanId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Adherence"
+            examples:
+              yes:
+                value: { answer: "yes" }
+      responses:
+        "200":
+          description: "Recorded. · تم التسجيل"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdherenceRecorded"
+              examples:
+                yes:
+                  value:
+                    plan_id: "pl_301"
+                    answer: "yes"
+                    answered_at: "2026-10-30T13:02:10+03:00"
+                    next: "awaiting_outcome"
+                    message_ar: "شكرًا لكم. ارسلوا صوتية قصيرة بالي انرمى من العزيمة."
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409":
+          description: "This plan was already answered. · الخطة أُجيب عنها من قبل"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              examples:
+                answered:
+                  value:
+                    error:
+                      code: "already_answered"
+                      message_ar: "سبق أن أجبتم عن هذه الخطة."
+                      message_en: "This plan has already been answered."
+                      request_id: "req_5c8e44"
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/outcomes:
+    post:
+      tags: [Outcomes]
+      operationId: recordOutcome
+      summary: "Record the post-event result · تسجيل نتيجة ما بعد المناسبة"
+      description: |
+        قياس ما بعد المناسبة ← مقارنة بآخر مناسبة مشابهة ← تحديث التعلم (المكافأة): طبقتها وهدر أقل من 80% من المتوقع = نجاح كامل،
+        جزئيًا = نصف نجاح، لم تُطبّق = فشل. يرجع أيضًا أفضل خطوة نفعت، ورابط طلب جمعية إذا بقي أكل سليم.
+
+        Post-event measurement, compared with the last similar event, then the learning update (reward): applied and
+        waste under 80% of expected is a full success, partial is half, not applied is a failure. Also returns the step
+        that worked best, and a charity-request link when safe food was left over.
+
+        `change_pct` كسر عشري سالب إذا انخفض الهدر: `-0.62` تعني «أقل 62%» ·
+        `change_pct` is a signed fraction, negative when waste fell: `-0.62` means "62% less".
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecordOutcome"
+            examples:
+              gathering:
+                value: { household_id: "h_demo", plan_id: "pl_301", measurement_id: 5023 }
+      responses:
+        "200":
+          description: "The comparison. · نتيجة المقارنة"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Outcome"
+              examples:
+                gathering:
+                  value:
+                    plan_id: "pl_301"
+                    actual_g: 900
+                    prev_similar_g: 2400
+                    change_pct: -0.62
+                    best_step_ar: "علب البواقي"
+                    charity_url: "https://litadoom.example/tools/charity-request"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/households/{id}/summary:
+    get:
+      tags: [Forecast]
+      operationId: getMonthlySummary
+      summary: "Monthly summary · الملخص الشهري"
+      description: |
+        ملخص شهر للأسرة: الكيلوجرامات والقيمة التقديرية بالريال والمقارنة بالشهر السابق وأكثر الأصناف والخطط المُطبّقة.
+
+        A household's month: kilograms, estimated value in riyals, comparison with the previous month, top items and
+        applied plans.
+      parameters:
+        - $ref: "#/components/parameters/HouseholdId"
+        - name: month
+          in: query
+          description: "Month as YYYY-MM (default: current). · الشهر بصيغة YYYY-MM (الافتراضي الشهر الحالي)"
+          schema: { type: string, pattern: "^\\d{4}-(0[1-9]|1[0-2])$" }
+          example: "2026-10"
+      responses:
+        "200":
+          description: "The summary. · ملخص الشهر"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlySummary"
+              examples:
+                october:
+                  value:
+                    household_id: "h_demo"
+                    month: "2026-10"
+                    total_kg: 6.8
+                    estimated_value_sar: 68
+                    change_vs_previous_pct: -0.31
+                    top_items:
+                      - { item_ar: "رز مطبوخ", grams: 3200, share: 47 }
+                      - { item_ar: "خبز", grams: 1360, share: 20 }
+                      - { item_ar: "لحوم", grams: 950, share: 14 }
+                    plans_sent: 2
+                    plans_applied: 2
+                    summary_ar: "ملخص أكتوبر: 6.8 كجم، أقل 31% من سبتمبر"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/insights/kpis:
+    get:
+      tags: [Insights]
+      operationId: getKpis
+      summary: "Litadoom KPIs · مؤشرات لتدوم الثلاثة"
+      description: |
+        المؤشرات الثلاثة لكل مجموعة (نَوء وضابطة): انخفاض الهدر بين القياس الأول واللاحق (وسيط الأسر)، ونسبة تطبيق التوصيات،
+        ومعدل إعادة القياس خلال 72 ساعة. أرقام مجمّعة فقط، بلا معرّفات أسر.
+
+        The three KPIs per cohort (Nawa and control): waste reduction between first and later measurement (median across
+        households), plan adherence, and re-measurement within 72 hours. Aggregates only; no household ids.
+      parameters:
+        - name: from
+          in: query
+          schema: { type: string, format: date }
+          example: "2026-10-01"
+        - name: to
+          in: query
+          schema: { type: string, format: date }
+          example: "2026-10-31"
+      responses:
+        "200":
+          description: "The KPIs. · المؤشرات"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Kpis"
+              examples:
+                trial:
+                  value:
+                    rows:
+                      - { cohort: "nawa", households: 102, measurements: 1232, waste_reduction_pct: 21.8, adherence_pct: 68.1, remeasure_pct: 77.7 }
+                      - { cohort: "control", households: 100, measurements: 792, waste_reduction_pct: -2.3, adherence_pct: null, remeasure_pct: 37.9 }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/insights/critical-weeks:
+    get:
+      tags: [Insights]
+      operationId: getCriticalWeeks
+      summary: "Critical-weeks map · خريطة الأسابيع الحرجة"
+      description: |
+        متوسط نسبة الخطر لكل أسبوع ومنطقة ومحفّز. تقول للتدوم متى تطلق حملتها ولأي منطقة.
+
+        Average risk ratio per week, region and driver: tells Litadoom when to launch a campaign and where.
+      parameters:
+        - name: driver
+          in: query
+          description: "Filter by driver. · تصفية بالمحفّز"
+          schema: { $ref: "#/components/schemas/Driver" }
+          example: "ramadan"
+        - name: region
+          in: query
+          description: "Filter by region. · تصفية بالمنطقة"
+          schema: { type: string }
+          example: "القصيم"
+      responses:
+        "200":
+          description: "The weeks. · الأسابيع الحرجة"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CriticalWeeks"
+              examples:
+                qassim:
+                  value:
+                    rows:
+                      - { week_start: "2026-10-25", region: "القصيم", avg_ratio: 1.0, top_driver: null, level: "low" }
+                      - { week_start: "2026-11-01", region: "القصيم", avg_ratio: 1.8, top_driver: "gathering", level: "mid" }
+                      - { week_start: "2026-11-08", region: "القصيم", avg_ratio: 2.4, top_driver: "post_shopping", level: "high" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/insights/live:
+    get:
+      tags: [Insights]
+      operationId: getLiveFeed
+      summary: "Live anonymised feed · البث الحي المجهّل"
+      description: |
+        آخر القياسات المجهّلة: المدينة والصنف والكمية والسبب فقط. للبث الحي على لوحة لتدوم (يمكن أيضًا الاشتراك عبر Realtime).
+
+        The latest anonymised measurements: city, item, quantity and reason only. Feeds the live panel on the Litadoom
+        dashboard (also available over Realtime).
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
+          example: 3
+        - name: since
+          in: query
+          description: "Only rows after this time. · فقط ما بعد هذا الوقت"
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: "Latest rows. · آخر القياسات"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LiveFeed"
+              examples:
+                latest:
+                  value:
+                    rows:
+                      - { id: 1, city: "بريدة", item_ar: "رز مطبوخ", grams: 600, reason_ar: "طبخ زيادة", created_at: "2026-10-22T22:13:46Z" }
+                      - { id: 2, city: "جدة", item_ar: "خبز", grams: 300, reason_ar: "خرب أو يبس", created_at: "2026-10-22T22:13:06Z" }
+                      - { id: 3, city: "الدمام", item_ar: "خس", grams: 150, reason_ar: "نسيان بالثلاجة", created_at: "2026-10-22T22:12:06Z" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/channels/whatsapp/inbound:
+    post:
+      tags: [Channels]
+      operationId: whatsappInbound
+      summary: "WhatsApp inbound webhook · استقبال رسائل واتساب"
+      description: |
+        نقطة استقبال رسائل واتساب Cloud API. يجب الرد خلال 3 ثوانٍ؛ المعالجة الثقيلة (تحويل الصوت) تكمل بعد الرد،
+        ويصل جواب البوت للأسرة كرسالة عادية. رقم الجوال يُحوَّل لبصمة عند الدخول.
+
+        Receives WhatsApp Cloud API messages. It must answer within 3 seconds; heavy work (transcription) continues
+        after the acknowledgement and the bot's reply reaches the household as a normal message. The phone number is
+        hashed at the edge.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WhatsAppWebhook"
+            examples:
+              voice:
+                summary: "A voice note · صوتية من أسرة"
+                value:
+                  object: "whatsapp_business_account"
+                  entry:
+                    - id: "104500000000001"
+                      changes:
+                        - field: "messages"
+                          value:
+                            messaging_product: "whatsapp"
+                            metadata: { display_phone_number: "966500000000", phone_number_id: "104500000000002" }
+                            contacts:
+                              - { wa_id: "966555550123", profile: { name: "ضيف العرض" } }
+                            messages:
+                              - { from: "966555550123", id: "wamid.HBgLOTY2NTU1NTUwMTIz", timestamp: "1793000000", type: "audio", audio: { id: "9c1e", mime_type: "audio/ogg; codecs=opus" } }
+              button:
+                summary: "ضغطة زر «بطبقها» · The «بطبقها» button"
+                value:
+                  object: "whatsapp_business_account"
+                  entry:
+                    - id: "104500000000001"
+                      changes:
+                        - field: "messages"
+                          value:
+                            messaging_product: "whatsapp"
+                            metadata: { display_phone_number: "966500000000", phone_number_id: "104500000000002" }
+                            messages:
+                              - from: "966555550123"
+                                id: "wamid.HBgLOTY2NTU1NTUwMTIz2"
+                                timestamp: "1793000100"
+                                type: "interactive"
+                                interactive: { type: "button_reply", button_reply: { id: "plan_yes", title: "بطبقها" } }
+      responses:
+        "200":
+          description: "Acknowledged. · استُلمت"
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status: { type: string, const: "received" }
+              examples:
+                ok:
+                  value: { status: "received" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/channels/web/inbound:
+    post:
+      tags: [Channels]
+      operationId: webInbound
+      summary: "Web chat inbound · استقبال رسائل نسخة الويب"
+      description: |
+        نسخة المحادثة على الويب تتكلم مع المحرك مثل واتساب تمامًا: رسالة مكتوبة، أو ضغطة زر رد سريع، أو صوتية (multipart).
+        يرجع المحرك رد البوت جاهزًا: قائمة `replies` بنوع لكل رد (`kind`)، وتاريخ المحرك الحالي `today`.
+
+        The web chat talks to the engine exactly like WhatsApp: a typed message, a quick-reply button press, or a voice
+        note (multipart). The engine returns the bot's reply ready to render: a `replies` list where each reply has a
+        `kind`, plus the engine's current date `today`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebInboundJson"
+            examples:
+              text:
+                summary: "Typed message · رسالة مكتوبة"
+                value: { household_id: "h_demo", type: "text", text: "الخميس عندنا عزيمة 14 نفر", button_id: null }
+              button:
+                summary: "Button press · ضغطة زر"
+                value: { household_id: "h_demo", type: "button", text: "تمام", button_id: "event_ok" }
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/WebInboundAudio"
+      responses:
+        "200":
+          description: "The bot's replies. · ردود البوت"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InboundResponse"
+              examples:
+                event:
+                  summary: "An event card · بطاقة مناسبة"
+                  value:
+                    household_id: "h_demo"
+                    today: "2026-10-25"
+                    replies:
+                      - id: "r_9001"
+                        at: "2026-10-25T08:20:11+03:00"
+                        kind: "event"
+                        text: "سجّلت: عزيمة · الخميس 29 أكتوبر · 14 شخص"
+                        event: { event_id: "ev_77", type: "gathering", starts_on: "2026-10-29", ends_on: null, guests: 14 }
+                        buttons:
+                          - { id: "event_ok", label: "تمام" }
+                          - { id: "event_edit", label: "عدّل" }
+                voice:
+                  summary: "Voice → items · صوتية ← أصناف"
+                  value:
+                    household_id: "h_demo"
+                    today: "2026-10-25"
+                    replies:
+                      - id: "r_9002"
+                        at: "2026-10-25T08:14:02+03:00"
+                        kind: "measurement"
+                        text: "سجّلت 3 أصناف: رز مطبوخ 600 جم (طبخ زيادة)، خبز 300 جم (يبس)، خس 150 جم (خرب بالثلاجة). صح؟"
+                        transcript: "رمينا اليوم نص قدر رز، وربطة خبز إلا ربع، وخسة خربت بالثلاجة"
+                        total_g: 1050
+                        items:
+                          - { item_ar: "رز مطبوخ", category: "grains_cooked", qty_text: "نص قدر", grams: 600, reason: "overcooked", confidence: 0.8 }
+                          - { item_ar: "خبز", category: "bakery", qty_text: "ربطة إلا ربع", grams: 300, reason: "spoiled", confidence: 0.75 }
+                          - { item_ar: "خس", category: "vegetables_leafy", qty_text: "حبة", grams: 150, reason: "forgotten", confidence: 0.7 }
+                        buttons:
+                          - { id: "items_ok", label: "صح" }
+                          - { id: "items_edit", label: "عدّل" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+  /v1/demo/advance-time:
+    post:
+      tags: [Demo]
+      operationId: advanceDemoTime
+      summary: "Advance the demo clock · تقديم وقت العرض"
+      description: |
+        للعرض فقط: يقدّم ساعة الأسرة التجريبية بضعة أيام ويشغّل المجدولات فورًا (الخطة قبل الذروة بيومين، وتذكير يوم المناسبة،
+        وسؤال اليوم التالي)، فيرى المحكم الدورة كاملة في دقيقة. معطّلة في الإنتاج وترجع `403`.
+
+        Demo only: moves the demo household's clock forward and runs the schedulers immediately (the plan two days
+        before the peak, the event-day reminder, the next-day follow-up), so a judge sees the whole cycle in a minute.
+        Disabled in production, where it returns `403`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvanceTime"
+            examples:
+              twoDays:
+                summary: "Two days · قدّم يومين"
+                value: { household_id: "h_demo", days: 2 }
+      responses:
+        "200":
+          description: "The new date and what the scheduler sent. · التاريخ الجديد وما أرسله المجدول"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdvanceTimeResponse"
+              examples:
+                plan:
+                  value:
+                    household_id: "h_demo"
+                    today: "2026-10-27"
+                    triggered: ["WF-05", "WF-06"]
+                    replies:
+                      - id: "r_9120"
+                        at: "2026-10-27T20:30:00+03:00"
+                        kind: "plan"
+                        text: "الخميس خطره مرتفع. 3 خطوات تكفي:"
+                        plan:
+                          plan_id: "pl_301"
+                          send_at: "2026-10-27T20:30:00+03:00"
+                          steps:
+                            - { step_id: "G-PRE-02", phase: "before", text_ar: "الأربعاء: فضّوا رف بالثلاجة وجهّزوا علب للبواقي" }
+                            - { step_id: "G-DUR-01", phase: "during", text_ar: "بعد العشاء: الباقي يدخل الثلاجة بسرعة، والرز يتقسّم ويتجمّد" }
+                            - { step_id: "G-AFT-03", phase: "after", text_ar: "الجمعة: غداكم من بواقي العزيمة بدل طبخ جديد" }
+                          litadoom_tools:
+                            - { tool: "quantity_calculator", url: "https://litadoom.example/tools/quantity-calculator" }
+                          source: "plan_library_v1"
+                        buttons:
+                          - { id: "plan_yes", label: "بطبقها" }
+                          - { id: "plan_later", label: "ذكّرني بكرة" }
+                          - { id: "plan_no", label: "ما تناسبنا" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403":
+          description: "Demo helpers are disabled here. · العرض معطّل في هذه البيئة"
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+              examples:
+                disabled:
+                  value:
+                    error:
+                      code: "demo_disabled"
+                      message_ar: "تقديم الوقت متاح في بيئة العرض فقط."
+                      message_en: "Advancing time is only available in the demo environment."
+                      request_id: "req_0d41ab"
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/ServerError" }
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: |
+        مفتاح لكل جهة: لتدوم لها مفتاح، وكل شريك أو قناة له مفتاحه، ويمكن إيقاف أي مفتاح دون المساس بالباقي.
+        المفتاح التجريبي للعرض: `nawa_demo_key_2026`.
+
+        One key per party: Litadoom has a key, every partner or channel has its own, and any key can be revoked on its
+        own. The demo key for the showcase: `nawa_demo_key_2026`.
+
+  parameters:
+    HouseholdId:
+      name: id
+      in: path
+      required: true
+      description: "The household's random id. · معرّف الأسرة العشوائي"
+      schema: { type: string, pattern: "^h_[a-z0-9]+$" }
+      example: "h_demo"
+    PlanId:
+      name: id
+      in: path
+      required: true
+      description: "The plan id. · معرّف الخطة"
+      schema: { type: string, pattern: "^pl_[0-9]+$" }
+      example: "pl_301"
+
+  responses:
+    BadRequest:
+      description: "Invalid request. · طلب غير صحيح"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          examples:
+            validation:
+              value:
+                error:
+                  code: "validation_failed"
+                  message_ar: "في بيانات ناقصة أو غير صحيحة في الطلب."
+                  message_en: "The request has missing or invalid fields."
+                  request_id: "req_c3a1f0"
+                  details:
+                    - { field: "size", message: "must be between 1 and 20" }
+    Unauthorized:
+      description: "Missing or invalid API key. · المفتاح مفقود أو غير صالح"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          examples:
+            noKey:
+              value:
+                error:
+                  code: "invalid_api_key"
+                  message_ar: "المفتاح مفقود أو غير صالح. أرسلوه في الترويسة x-api-key."
+                  message_en: "Missing or invalid API key. Send it in the x-api-key header."
+                  request_id: "req_91ab77"
+    NotFound:
+      description: "Not found. · غير موجود"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          examples:
+            household:
+              value:
+                error:
+                  code: "not_found"
+                  message_ar: "ما لقينا هذه الأسرة."
+                  message_en: "Household not found."
+                  request_id: "req_6e02cd"
+    TooManyRequests:
+      description: "Too many requests. · طلبات كثيرة"
+      headers:
+        Retry-After:
+          description: "Seconds to wait. · ثواني الانتظار"
+          schema: { type: integer }
+          example: 12
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          examples:
+            slow:
+              value:
+                error:
+                  code: "rate_limited"
+                  message_ar: "طلبات كثيرة. جرّبوا بعد ثواني."
+                  message_en: "Too many requests. Try again in a few seconds."
+                  request_id: "req_a7d3e8"
+    ServerError:
+      description: "Engine error. · خطأ في المحرك"
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+          examples:
+            boom:
+              value:
+                error:
+                  code: "internal_error"
+                  message_ar: "صار خطأ عندنا. جرّبوا مرة ثانية."
+                  message_en: "Something went wrong on our side. Please try again."
+                  request_id: "req_f00d12"
+
+  schemas:
+    # ---------- shared vocabulary ----------
+    RiskLevel:
+      type: string
+      enum: [low, mid, high]
+      description: "منخفض · متوسط · مرتفع"
+    Driver:
+      type: string
+      enum: [gathering, gathering_after, ramadan, eid, travel_before, post_shopping, heatwave, school_start]
+      description: "محفّز الخطر: عزيمة، بواقي عزيمة، رمضان، العيد، قبل السفر، بعد الراتب، موجة حر، بداية الدراسة"
+    EventType:
+      type: string
+      enum: [gathering, travel, ramadan_iftar, eid, other]
+      description: "عزيمة · سفر · فطور رمضان · عيد · أخرى"
+    WasteReason:
+      type: string
+      enum: [overcooked, spoiled, expired, plate_leftover, forgotten, overbought, other]
+      description: "طبخ زيادة · يبس أو خرب · انتهت الصلاحية · بواقي صحون · نسيان بالثلاجة · تسوق زيادة · أخرى"
+    LitadoomTool:
+      type: string
+      enum: [quantity_calculator, charity_request, measure]
+      description: "حاسبة الكميات · طلب جمعية · أداة القياس"
+    Phase:
+      type: string
+      enum: [before, during, after]
+      description: "قبل · أثناء · بعد"
+    Channel:
+      type: string
+      enum: [whatsapp, web, litadoom]
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message_ar, message_en]
+          properties:
+            code: { type: string, description: "Stable machine-readable code. · رمز ثابت للبرمجة" }
+            message_ar: { type: string }
+            message_en: { type: string }
+            request_id: { type: string }
+            details:
+              type: array
+              items:
+                type: object
+                properties:
+                  field: { type: string }
+                  message: { type: string }
+
+    # ---------- households ----------
+    RegisterHousehold:
+      type: object
+      required: [size, city, consent]
+      properties:
+        size: { type: integer, minimum: 1, maximum: 20, description: "Number of people at home. · عدد أفراد البيت" }
+        city: { type: string }
+        region: { type: string }
+        channel: { $ref: "#/components/schemas/Channel" }
+        consent: { type: boolean, const: true, description: "Explicit consent to messages. · موافقة صريحة على الرسائل" }
+        phone:
+          type: string
+          description: "Optional, E.164. Hashed, never stored. · اختياري، بصيغة E.164. يُحوَّل لبصمة ولا يُخزَّن"
+          examples: ["+966555550123"]
+    Household:
+      type: object
+      required: [household_id, cohort]
+      properties:
+        household_id: { type: string, pattern: "^h_[a-z0-9]+$" }
+        cohort: { type: string, enum: [nawa, control], description: "Trial cohort. · مجموعة التجربة" }
+        size: { type: integer }
+        city: { type: string }
+        region: { type: string }
+        channel: { $ref: "#/components/schemas/Channel" }
+        created_at: { type: string, format: date-time }
+
+    # ---------- measurements ----------
+    MeasuredItem:
+      type: object
+      required: [item_ar, category, grams, reason]
+      properties:
+        item_ar: { type: string, description: "Item name. · اسم الصنف" }
+        category: { type: string, examples: [grains_cooked, bakery, vegetables_leafy, meat] }
+        qty_text: { type: string, description: "The quantity as spoken. · الكمية كما قيلت" }
+        grams: { type: integer, minimum: 0 }
+        reason: { $ref: "#/components/schemas/WasteReason" }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+    VoiceByUrl:
+      type: object
+      required: [household_id, audio_url]
+      properties:
+        household_id: { type: string }
+        audio_url: { type: string, format: uri }
+        measured_on: { type: string, format: date }
+    VoiceUpload:
+      type: object
+      required: [household_id, audio]
+      properties:
+        household_id: { type: string }
+        audio: { type: string, format: binary, description: "ogg · webm · m4a، حتى 60 ثانية · up to 60 s." }
+    VoiceMeasurement:
+      type: object
+      required: [measurement_id, status, transcript, items, total_g]
+      properties:
+        measurement_id: { type: integer }
+        status: { type: string, enum: [pending_confirmation, confirmed] }
+        transcript: { type: string, description: "The transcript (the audio itself is deleted). · نص الصوتية (الصوتية نفسها تُحذف)" }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/MeasuredItem" }
+        total_g: { type: integer }
+    CreateMeasurement:
+      type: object
+      required: [household_id, source, measured_on, items]
+      properties:
+        household_id: { type: string }
+        source: { type: string, enum: [voice, text, litadoom_tool] }
+        measured_on: { type: string, format: date }
+        event_id: { type: [integer, "null"], description: "Set for a post-event measurement. · إذا كان قياس ما بعد مناسبة" }
+        transcript: { type: string }
+        items:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/MeasuredItem" }
+    MeasurementSaved:
+      type: object
+      required: [measurement_id, total_g, items_saved]
+      properties:
+        measurement_id: { type: integer }
+        total_g: { type: integer }
+        items_saved: { type: integer }
+
+    # ---------- events ----------
+    ParseEventRequest:
+      type: object
+      required: [household_id, text]
+      properties:
+        household_id: { type: string }
+        text: { type: string, description: "The sentence as the household wrote it. · الجملة كما كتبتها الأسرة" }
+        today: { type: string, format: date, description: "The household's date (demo). · تاريخ الأسرة (للعرض)" }
+    ParsedEvent:
+      type: object
+      required: [type, confirmed]
+      properties:
+        event_id: { type: [integer, "null"] }
+        type: { $ref: "#/components/schemas/EventType" }
+        starts_on: { type: [string, "null"], format: date }
+        starts_on_hijri: { type: [string, "null"], examples: ["18 جمادى الأولى 1448 هـ"] }
+        ends_on: { type: [string, "null"], format: date }
+        guests: { type: [integer, "null"] }
+        confirmed: { type: boolean }
+        confirmation_ar: { type: [string, "null"], description: "The confirmation card text. · نص بطاقة التأكيد" }
+        question_ar: { type: [string, "null"], description: "One follow-up question when the date is missing. · سؤال واحد إذا نقص التاريخ" }
+
+    # ---------- forecast ----------
+    ForecastDay:
+      type: object
+      required: [date, level, expected_kg, drivers, reason_ar, items_at_risk]
+      properties:
+        date: { type: string, format: date }
+        level: { $ref: "#/components/schemas/RiskLevel" }
+        expected_kg: { type: number }
+        drivers:
+          type: array
+          items: { $ref: "#/components/schemas/Driver" }
+        reason_ar: { type: string, description: "The decision's reason in plain Arabic. · سبب القرار بلغة بسيطة" }
+        items_at_risk:
+          type: array
+          items: { type: string }
+    Forecast:
+      type: object
+      required: [household_id, days, model_version]
+      properties:
+        household_id: { type: string }
+        days:
+          type: array
+          minItems: 7
+          maxItems: 7
+          items: { $ref: "#/components/schemas/ForecastDay" }
+        model_version: { type: string, examples: [risk-v1] }
+
+    # ---------- plans ----------
+    PlanStep:
+      type: object
+      required: [step_id, phase, text_ar]
+      properties:
+        step_id: { type: string, description: "A plan-library id. · معرّف من مكتبة الخطط", examples: [G-PRE-02] }
+        phase: { $ref: "#/components/schemas/Phase" }
+        text_ar: { type: string }
+    Plan:
+      type: object
+      required: [plan_id, send_at, steps, litadoom_tools, source]
+      properties:
+        plan_id: { type: string, pattern: "^pl_[0-9]+$" }
+        send_at: { type: string, format: date-time, description: "48 h before the peak, 8:30 pm. · موعد الإرسال: قبل الذروة بـ 48 ساعة، الساعة 8:30 م" }
+        steps:
+          type: array
+          minItems: 3
+          maxItems: 3
+          items: { $ref: "#/components/schemas/PlanStep" }
+        litadoom_tools:
+          type: array
+          items:
+            type: object
+            required: [tool, url]
+            properties:
+              tool: { $ref: "#/components/schemas/LitadoomTool" }
+              url: { type: string, format: uri }
+        source: { type: string, examples: [plan_library_v1] }
+    GeneratePlan:
+      type: object
+      required: [household_id]
+      properties:
+        household_id: { type: string }
+        event_id: { type: integer }
+        forecast_day: { type: string, format: date }
+      description: "Send `event_id` or `forecast_day`. · أرسلوا `event_id` أو `forecast_day`"
+    Adherence:
+      type: object
+      required: [answer]
+      properties:
+        answer: { type: string, enum: [yes, partial, no], description: "طبقتها · جزئيًا · لا" }
+    AdherenceRecorded:
+      type: object
+      required: [plan_id, answer, answered_at]
+      properties:
+        plan_id: { type: string }
+        answer: { type: string, enum: [yes, partial, no] }
+        answered_at: { type: string, format: date-time }
+        next: { type: string, enum: [awaiting_outcome, done] }
+        message_ar: { type: string }
+
+    # ---------- outcomes ----------
+    RecordOutcome:
+      type: object
+      required: [household_id, plan_id]
+      properties:
+        household_id: { type: string }
+        plan_id: { type: string }
+        measurement_id: { type: integer, description: "The post-event measurement. · قياس ما بعد المناسبة (من القياس الصوتي)" }
+        items:
+          type: array
+          description: "Or the items directly. · أو الأصناف مباشرة"
+          items: { $ref: "#/components/schemas/MeasuredItem" }
+    Outcome:
+      type: object
+      required: [plan_id, actual_g, prev_similar_g, change_pct]
+      properties:
+        plan_id: { type: string }
+        actual_g: { type: integer, description: "This event's waste. · هدر هذه المناسبة" }
+        prev_similar_g: { type: integer, description: "The last similar event's waste. · هدر آخر مناسبة مشابهة" }
+        change_pct: { type: number, description: "Signed fraction, negative = less waste. -0.62 = 62% less. · كسر عشري، سالب = أقل هدرًا. -0.62 = أقل 62%" }
+        best_step_ar: { type: [string, "null"], description: "The step that worked best. · أفضل خطوة نفعت" }
+        charity_url: { type: [string, "null"], format: uri, description: "Litadoom charity request, when safe food is left. · رابط طلب جمعية لتدوم إذا بقي أكل سليم" }
+    MonthlySummary:
+      type: object
+      required: [household_id, month, total_kg]
+      properties:
+        household_id: { type: string }
+        month: { type: string, examples: ["2026-10"] }
+        total_kg: { type: number }
+        estimated_value_sar: { type: number, description: "Estimated value in riyals. · قيمة تقديرية بالريال" }
+        change_vs_previous_pct: { type: [number, "null"], description: "Signed fraction. · كسر عشري، سالب = أقل من الشهر السابق" }
+        top_items:
+          type: array
+          items:
+            type: object
+            properties:
+              item_ar: { type: string }
+              grams: { type: integer }
+              share: { type: number, description: "Whole percent. · نسبة مئوية كاملة (47 = 47%)" }
+        plans_sent: { type: integer }
+        plans_applied: { type: integer }
+        summary_ar: { type: string }
+
+    # ---------- insights ----------
+    KpiRow:
+      type: object
+      required: [cohort, households, measurements, waste_reduction_pct, remeasure_pct]
+      properties:
+        cohort: { type: string, enum: [nawa, control] }
+        households: { type: integer }
+        measurements: { type: integer }
+        waste_reduction_pct: { type: number, description: "Already a percent. · نسبة مئوية جاهزة (21.8 = 21.8%)" }
+        adherence_pct: { type: [number, "null"], description: "null for control, which gets no plans. · null للمجموعة الضابطة لأنها لا تتلقى خططًا" }
+        remeasure_pct: { type: number }
+    Kpis:
+      type: object
+      required: [rows]
+      properties:
+        rows:
+          type: array
+          items: { $ref: "#/components/schemas/KpiRow" }
+    CriticalWeek:
+      type: object
+      required: [week_start, region, avg_ratio, level]
+      properties:
+        week_start: { type: string, format: date, description: "The week's Sunday. · أول أيام الأسبوع (الأحد)" }
+        region: { type: string }
+        avg_ratio: { type: number, description: "1.0 = the usual rate. · 1.0 = المعدل المعتاد" }
+        top_driver: { type: [string, "null"] }
+        level: { $ref: "#/components/schemas/RiskLevel" }
+    CriticalWeeks:
+      type: object
+      required: [rows]
+      properties:
+        rows:
+          type: array
+          items: { $ref: "#/components/schemas/CriticalWeek" }
+    LiveRow:
+      type: object
+      required: [id, city, item_ar, grams, reason_ar, created_at]
+      properties:
+        id: { type: integer }
+        city: { type: string }
+        item_ar: { type: string }
+        grams: { type: integer }
+        reason_ar: { type: string }
+        created_at: { type: string, format: date-time }
+    LiveFeed:
+      type: object
+      required: [rows]
+      properties:
+        rows:
+          type: array
+          items: { $ref: "#/components/schemas/LiveRow" }
+
+    # ---------- channels ----------
+    QuickReply:
+      type: object
+      required: [id, label]
+      properties:
+        id: { type: string, examples: [plan_yes] }
+        label: { type: string, examples: ["بطبقها"] }
+      description: "A quick-reply button, three at most on WhatsApp. · زر رد سريع، ثلاثة كحد أقصى في واتساب"
+    ReplyBase:
+      type: object
+      required: [id, at, kind, text]
+      properties:
+        id: { type: string }
+        at: { type: string, format: date-time }
+        text: { type: string }
+        buttons:
+          type: array
+          maxItems: 3
+          items: { $ref: "#/components/schemas/QuickReply" }
+    BotReply:
+      description: "One bot reply; its shape follows `kind`. · رد واحد من البوت، نوعه في `kind`"
+      oneOf:
+        - $ref: "#/components/schemas/TextReply"
+        - $ref: "#/components/schemas/MeasurementReply"
+        - $ref: "#/components/schemas/EventReply"
+        - $ref: "#/components/schemas/ForecastReply"
+        - $ref: "#/components/schemas/PlanReply"
+        - $ref: "#/components/schemas/ReminderReply"
+        - $ref: "#/components/schemas/OutcomeReply"
+      discriminator:
+        propertyName: kind
+        mapping:
+          text: "#/components/schemas/TextReply"
+          measurement: "#/components/schemas/MeasurementReply"
+          event: "#/components/schemas/EventReply"
+          forecast: "#/components/schemas/ForecastReply"
+          plan: "#/components/schemas/PlanReply"
+          reminder: "#/components/schemas/ReminderReply"
+          outcome: "#/components/schemas/OutcomeReply"
+    TextReply:
+      allOf:
+        - $ref: "#/components/schemas/ReplyBase"
+        - type: object
+          properties:
+            kind: { type: string, const: text }
+    ReminderReply:
+      allOf:
+        - $ref: "#/components/schemas/ReplyBase"
+        - type: object
+          properties:
+            kind: { type: string, const: reminder }
+    MeasurementReply:
+      allOf:
+        - $ref: "#/components/schemas/ReplyBase"
+        - type: object
+          required: [items, total_g]
+          properties:
+            kind: { type: string, const: measurement }
+            items:
+              type: array
+              items: { $ref: "#/components/schemas/MeasuredItem" }
+            total_g: { type: integer }
+            transcript: { type: string }
+    EventReply:
+      allOf:
+        - $ref: "#/components/schemas/ReplyBase"
+        - type: object
+          required: [event]
+          properties:
+            kind: { type: string, const: event }
+            event:
+              type: object
+              required: [event_id, type, starts_on]
+              properties:
+                event_id: { type: string, examples: [ev_77] }
+                type: { $ref: "#/components/schemas/EventType" }
+                starts_on: { type: string, format: date }
+                ends_on: { type: [string, "null"], format: date }
+                guests: { type: [integer, "null"] }
+    ForecastReply:
+      allOf:
+        - $ref: "#/components/schemas/ReplyBase"
+        - type: object
+          required: [forecast, nashra_url]
+          properties:
+            kind: { type: string, const: forecast }
+            forecast: { $ref: "#/components/schemas/Forecast" }
+            nashra_url: { type: string, description: "The household's bulletin page. · رابط صفحة نشرة الأسرة", examples: ["/n/h_demo"] }
+    PlanReply:
+      allOf:
+        - $ref: "#/components/schemas/ReplyBase"
+        - type: object
+          required: [plan]
+          properties:
+            kind: { type: string, const: plan }
+            plan: { $ref: "#/components/schemas/Plan" }
+    OutcomeReply:
+      allOf:
+        - $ref: "#/components/schemas/ReplyBase"
+        - type: object
+          required: [outcome]
+          properties:
+            kind: { type: string, const: outcome }
+            outcome: { $ref: "#/components/schemas/Outcome" }
+            transcript: { type: string }
+    WebInboundJson:
+      type: object
+      required: [household_id, type]
+      properties:
+        household_id: { type: string }
+        type: { type: string, enum: [text, button] }
+        text: { type: string, description: "The message, or the pressed button's label. · الرسالة، أو نص الزر المضغوط" }
+        button_id: { type: [string, "null"], description: "The quick-reply button id. · معرّف زر الرد السريع" }
+    WebInboundAudio:
+      type: object
+      required: [household_id, type, audio]
+      properties:
+        household_id: { type: string }
+        type: { type: string, const: audio }
+        audio: { type: string, format: binary }
+    InboundResponse:
+      type: object
+      required: [household_id, today, replies]
+      properties:
+        household_id: { type: string }
+        today: { type: string, format: date, description: "The engine's date for the household; moves with advance-time. · تاريخ المحرك للأسرة، يتحرك مع advance-time" }
+        replies:
+          type: array
+          items: { $ref: "#/components/schemas/BotReply" }
+    AdvanceTime:
+      type: object
+      required: [household_id, days]
+      properties:
+        household_id: { type: string }
+        days: { type: integer, minimum: 1, maximum: 14, description: "Number of days. · عدد الأيام" }
+    AdvanceTimeResponse:
+      allOf:
+        - $ref: "#/components/schemas/InboundResponse"
+        - type: object
+          required: [triggered]
+          properties:
+            triggered:
+              type: array
+              description: "Workflows fired, e.g. WF-06 (the plan). · المجدولات التي اشتغلت، مثل WF-06 (الخطة)"
+              items: { type: string, examples: [WF-06] }
+    WhatsAppWebhook:
+      type: object
+      description: "The slice of Meta's WhatsApp Cloud API payload the engine reads. · حمولة Meta WhatsApp Cloud API المختصرة، الحقول التي يقرأها المحرك فقط"
+      required: [object, entry]
+      properties:
+        object: { type: string, const: whatsapp_business_account }
+        entry:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              changes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field: { type: string, examples: [messages] }
+                    value:
+                      type: object
+                      properties:
+                        messaging_product: { type: string }
+                        metadata:
+                          type: object
+                          properties:
+                            display_phone_number: { type: string }
+                            phone_number_id: { type: string }
+                        contacts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              wa_id: { type: string }
+                              profile: { type: object, properties: { name: { type: string } } }
+                        messages:
+                          type: array
+                          items:
+                            type: object
+                            required: [from, id, type]
+                            properties:
+                              from: { type: string }
+                              id: { type: string }
+                              timestamp: { type: string }
+                              type: { type: string, enum: [text, audio, interactive] }
+                              text: { type: object, properties: { body: { type: string } } }
+                              audio: { type: object, properties: { id: { type: string }, mime_type: { type: string } } }
+                              interactive:
+                                type: object
+                                properties:
+                                  type: { type: string, const: button_reply }
+                                  button_reply: { type: object, properties: { id: { type: string }, title: { type: string } } }

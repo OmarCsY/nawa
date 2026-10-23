@@ -1,0 +1,224 @@
+@import 'tailwindcss';
+
+/*
+ * Nawa design tokens — the single source of truth.
+ * Tailwind's default palette is wiped (`--color-*: initial`) so no stray blue,
+ * navy or green utility can exist anywhere in the app.
+ * JS consumers (ECharts) read these same variables via src/lib/theme.ts.
+ */
+@theme {
+  --color-*: initial;
+
+  /* Brand */
+  --color-plum: #5e2750;
+  --color-plum-soft: color-mix(in oklab, #5e2750 10%, #f7efe3);
+  --color-saffron: #c8742a;
+  --color-saffron-soft: color-mix(in oklab, #c8742a 14%, #f7efe3);
+
+  /* Surfaces & text */
+  --color-sand: #f7efe3;
+  --color-paper: #fdf9f3;
+  --color-ink: #231a14;
+  --color-muted: #6e5e50;
+  --color-line: #e4d6c4;
+
+  /* Risk scale */
+  --color-risk-low: #e9dcc8;
+  --color-risk-mid: #e2a04a;
+  --color-risk-high: #a33a2a;
+  --color-risk-high-soft: color-mix(in oklab, #a33a2a 10%, #fdf9f3);
+
+  /* WhatsApp palette: used ONLY inside the chat phone (src/pages/chat), so the web version feels like the real bot */
+  --color-wa-header: #008069;
+  --color-wa-bg: #efeae2;
+  --color-wa-out: #d9fdd3;
+  --color-wa-in: #ffffff;
+  --color-wa-tick: #53bdeb;
+  --color-wa-ink: #1f1a16; /* WhatsApp's own greys lean blue; these are warmed to sit with Nawa's palette */
+  --color-wa-meta: #6b6459;
+  --color-wa-accent: #00a884;
+  --color-wa-bar: #f1ece3;
+  --color-white: #ffffff;
+
+  --font-sans: 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 0 rgb(35 26 20 / 0.03), 0 12px 32px -18px rgb(94 39 80 / 0.18);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-rise: rise 520ms var(--ease-out-soft) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-halo: halo 2.4s var(--ease-out-soft) infinite;
+  --animate-expand: expand 450ms var(--ease-out-soft) both;
+  --animate-arrive: arrive 3.2s var(--ease-out-soft) both;
+  --animate-pop: pop 280ms var(--ease-out-soft) both;
+  --animate-dot: dot 1.1s ease-in-out infinite;
+  --animate-rec: rec 1.1s ease-in-out infinite;
+  --animate-bar: bar 900ms ease-in-out infinite;
+  --animate-glow: glow 1.4s ease-out infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* a new list row opens its own space, so the rows below glide down instead of jumping */
+  @keyframes expand {
+    from {
+      grid-template-rows: 0fr;
+    }
+    to {
+      grid-template-rows: 1fr;
+    }
+  }
+  /* …then slides in with a saffron wash that fades */
+  @keyframes arrive {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+      background-color: color-mix(in oklab, var(--color-saffron) 28%, transparent);
+    }
+    14% {
+      opacity: 1;
+      transform: none;
+    }
+    45% {
+      background-color: color-mix(in oklab, var(--color-saffron) 20%, transparent);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  /* a chat bubble settles into place */
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* typing indicator dots */
+  @keyframes dot {
+    0%,
+    60%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+    30% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+  @keyframes rec {
+    50% {
+      opacity: 0.25;
+    }
+  }
+  @keyframes bar {
+    0%,
+    100% {
+      transform: scaleY(0.35);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-saffron) 55%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: -100% 0;
+    }
+  }
+  @keyframes halo {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-risk-high) 45%, transparent);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 10px transparent;
+    }
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-sand);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    accent-color: var(--color-plum);
+  }
+
+  body {
+    min-height: 100dvh;
+    background:
+      radial-gradient(60rem 28rem at 85% -10%, color-mix(in oklab, var(--color-saffron) 9%, transparent), transparent 70%),
+      var(--color-sand);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-saffron) 30%, transparent);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-saffron);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* The chat is a full-screen app on phones: the page itself must never scroll under it (see ChatPage). */
+@media (max-width: 767px) {
+  html.chat-lock,
+  html.chat-lock body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}
+
+@utility numerals {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

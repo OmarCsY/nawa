@@ -1,0 +1,390 @@
+/*
+ * Swagger UI in Nawa's palette. Scoped to `.nawa-swagger` so nothing leaks into other pages.
+ * Rules: plum for GET, saffron for POST (never blue/green), warm ink for code, sand and paper for surfaces.
+ * Arabic text inside the left-to-right widget picks its own direction per paragraph (`unicode-bidi: plaintext`).
+ */
+
+.nawa-swagger {
+  --sw-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+}
+
+.nawa-swagger .swagger-ui,
+.nawa-swagger .swagger-ui :is(div, p, span, a, label, h1, h2, h3, h4, h5, li, td, th, button, input, select, textarea, table, small, section) {
+  font-family: var(--font-sans);
+}
+.nawa-swagger .swagger-ui :is(pre, code, .microlight, .opblock-summary-path, .opblock-summary-path__deprecated, .parameter__name, .parameter__type, .prop-type, .prop-format, .model-title, .response-col_status, .curl, .request-url pre, .example, textarea.curl) {
+  font-family: var(--sw-mono);
+}
+
+.nawa-swagger .swagger-ui,
+.nawa-swagger .swagger-ui :is(.info .title, .info p, .info li, .info table, .opblock-tag, .opblock-summary-description, .opblock-description-wrapper p, .opblock-external-docs-wrapper p, .opblock-title_normal p, table thead tr td, table thead tr th, .parameter__name, .response-col_description, .responses-inner h4, .responses-inner h5, label, .tab li, .model-title, .model, section.models h4) {
+  color: var(--color-ink);
+}
+
+/* ---------- Arabic + English in one widget ---------- */
+.nawa-swagger .swagger-ui :is(.markdown, .renderedMarkdown, .opblock-summary-description, .opblock-tag small, .response-col_description, .parameters-col_description, .opblock-description-wrapper, .info .description) {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+.nawa-swagger .swagger-ui :is(.markdown p, .renderedMarkdown p, .info li, td, th) {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
+/* ---------- header: our own page already says who we are ---------- */
+.nawa-swagger .swagger-ui .info {
+  margin: 0 0 1.5rem;
+}
+.nawa-swagger .swagger-ui .info .title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-plum);
+}
+.nawa-swagger .swagger-ui .info .title small {
+  background: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .info .title small.version-stamp,
+.nawa-swagger .swagger-ui .info .title small.version-stamp pre {
+  background: var(--color-saffron);
+}
+.nawa-swagger .swagger-ui .info .title small pre {
+  color: var(--color-paper);
+}
+.nawa-swagger .swagger-ui .info a,
+.nawa-swagger .swagger-ui a.nostyle,
+.nawa-swagger .swagger-ui .markdown a,
+.nawa-swagger .swagger-ui .renderedMarkdown a {
+  color: var(--color-plum);
+  text-decoration-color: var(--color-saffron);
+}
+.nawa-swagger .swagger-ui .info table {
+  border-collapse: collapse;
+}
+.nawa-swagger .swagger-ui .info table :is(th, td) {
+  border: 1px solid var(--color-line);
+  padding: 0.5rem 0.75rem;
+}
+.nawa-swagger .swagger-ui .markdown code,
+.nawa-swagger .swagger-ui .renderedMarkdown code {
+  background: var(--color-saffron-soft);
+  color: var(--color-ink);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+/* ---------- servers + authorize ---------- */
+.nawa-swagger .swagger-ui .scheme-container {
+  background: var(--color-sand);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  box-shadow: none;
+  padding: 1rem 1.25rem;
+  margin: 0 0 1.5rem;
+}
+.nawa-swagger .swagger-ui select {
+  border: 1px solid var(--color-line);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  box-shadow: none;
+  border-radius: 0.5rem;
+}
+.nawa-swagger .swagger-ui select:focus-visible,
+.nawa-swagger .swagger-ui input:focus-visible,
+.nawa-swagger .swagger-ui textarea:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: 1px;
+}
+.nawa-swagger .swagger-ui input[type='text'],
+.nawa-swagger .swagger-ui input[type='password'],
+.nawa-swagger .swagger-ui input[type='search'],
+.nawa-swagger .swagger-ui textarea {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 0.5rem;
+  color: var(--color-ink);
+}
+.nawa-swagger .swagger-ui .servers > label select {
+  min-width: 18rem;
+}
+
+/* ---------- buttons ---------- */
+.nawa-swagger .swagger-ui .btn {
+  border-radius: 999px;
+  border-color: var(--color-plum);
+  color: var(--color-plum);
+  box-shadow: none;
+  font-weight: 700;
+}
+.nawa-swagger .swagger-ui .btn:hover {
+  box-shadow: none;
+  background: var(--color-plum-soft);
+}
+.nawa-swagger .swagger-ui .btn.authorize {
+  background: transparent;
+  border-color: var(--color-saffron);
+  color: var(--color-ink);
+}
+.nawa-swagger .swagger-ui .btn.authorize svg,
+.nawa-swagger .swagger-ui .btn.authorize svg path {
+  fill: var(--color-saffron);
+  color: var(--color-saffron);
+}
+.nawa-swagger .swagger-ui .btn.authorize:hover {
+  background: var(--color-saffron-soft);
+}
+.nawa-swagger .swagger-ui .btn.execute {
+  background: var(--color-plum);
+  border-color: var(--color-plum);
+  color: var(--color-sand);
+}
+.nawa-swagger .swagger-ui .btn.execute:hover {
+  background: color-mix(in oklab, var(--color-plum) 88%, black);
+}
+.nawa-swagger .swagger-ui .btn.cancel {
+  border-color: var(--color-risk-high);
+  color: var(--color-risk-high);
+}
+.nawa-swagger .swagger-ui .btn.try-out__btn {
+  border-color: var(--color-plum);
+  color: var(--color-plum);
+}
+.nawa-swagger .swagger-ui .btn.try-out__btn.cancel {
+  border-color: var(--color-risk-high);
+  color: var(--color-risk-high);
+}
+.nawa-swagger .swagger-ui .btn-clear {
+  color: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .authorization__btn svg,
+.nawa-swagger .swagger-ui .authorization__btn svg path {
+  fill: var(--color-muted);
+  color: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .authorization__btn.locked svg,
+.nawa-swagger .swagger-ui .authorization__btn.locked svg path {
+  fill: var(--color-plum);
+  color: var(--color-plum);
+}
+
+/* ---------- tags ---------- */
+.nawa-swagger .swagger-ui .filter-container {
+  margin: 0 0 1rem;
+}
+.nawa-swagger .swagger-ui .opblock-tag-section {
+  margin-bottom: 0.5rem;
+}
+.nawa-swagger .swagger-ui .opblock-tag {
+  border-bottom: 1px solid var(--color-line);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+.nawa-swagger .swagger-ui .opblock-tag:hover {
+  background: color-mix(in oklab, var(--color-saffron) 8%, transparent);
+}
+.nawa-swagger .swagger-ui .opblock-tag small {
+  color: var(--color-muted);
+  font-size: 0.8125rem;
+}
+.nawa-swagger .swagger-ui .opblock-tag svg {
+  fill: var(--color-plum);
+}
+
+/* ---------- operations: GET = plum, POST = saffron ---------- */
+.nawa-swagger .swagger-ui .opblock {
+  border-radius: 0.875rem;
+  box-shadow: none;
+  margin: 0 0 0.625rem;
+  overflow: hidden;
+}
+.nawa-swagger .swagger-ui .opblock .opblock-summary-method {
+  border-radius: 0.5rem;
+  font-weight: 700;
+  min-width: 4.5rem;
+}
+.nawa-swagger .swagger-ui .opblock .opblock-summary-path {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.nawa-swagger .swagger-ui .opblock .opblock-summary-description {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+.nawa-swagger .swagger-ui .opblock-summary-control:focus-visible {
+  outline: 2px solid var(--color-saffron);
+  outline-offset: -2px;
+}
+
+.nawa-swagger .swagger-ui .opblock.opblock-get {
+  background: color-mix(in oklab, var(--color-plum) 5%, var(--color-paper));
+  border-color: color-mix(in oklab, var(--color-plum) 55%, var(--color-paper));
+}
+.nawa-swagger .swagger-ui .opblock.opblock-get .opblock-summary-method {
+  background: var(--color-plum);
+  color: var(--color-sand);
+}
+.nawa-swagger .swagger-ui .opblock.opblock-get .opblock-summary {
+  border-color: color-mix(in oklab, var(--color-plum) 55%, var(--color-paper));
+}
+.nawa-swagger .swagger-ui .opblock.opblock-get .tab-header .tab-item.active h4 span::after {
+  background: var(--color-plum);
+}
+
+.nawa-swagger .swagger-ui .opblock.opblock-post {
+  background: color-mix(in oklab, var(--color-saffron) 8%, var(--color-paper));
+  border-color: color-mix(in oklab, var(--color-saffron) 70%, var(--color-paper));
+}
+.nawa-swagger .swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background: var(--color-saffron);
+  color: var(--color-ink);
+}
+.nawa-swagger .swagger-ui .opblock.opblock-post .opblock-summary {
+  border-color: color-mix(in oklab, var(--color-saffron) 70%, var(--color-paper));
+}
+.nawa-swagger .swagger-ui .opblock.opblock-post .tab-header .tab-item.active h4 span::after {
+  background: var(--color-saffron);
+}
+
+/* the other verbs are unused here, but keep them off blue/green anyway */
+.nawa-swagger .swagger-ui .opblock.opblock-put,
+.nawa-swagger .swagger-ui .opblock.opblock-patch,
+.nawa-swagger .swagger-ui .opblock.opblock-head,
+.nawa-swagger .swagger-ui .opblock.opblock-options {
+  background: var(--color-sand);
+  border-color: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .opblock.opblock-put .opblock-summary-method,
+.nawa-swagger .swagger-ui .opblock.opblock-patch .opblock-summary-method,
+.nawa-swagger .swagger-ui .opblock.opblock-head .opblock-summary-method,
+.nawa-swagger .swagger-ui .opblock.opblock-options .opblock-summary-method {
+  background: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .opblock.opblock-delete {
+  background: var(--color-risk-high-soft);
+  border-color: var(--color-risk-high);
+}
+.nawa-swagger .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+  background: var(--color-risk-high);
+}
+
+.nawa-swagger .swagger-ui .opblock .opblock-section-header {
+  background: color-mix(in oklab, var(--color-paper) 70%, transparent);
+  box-shadow: none;
+  border-bottom: 1px solid var(--color-line);
+}
+.nawa-swagger .swagger-ui .opblock .opblock-section-header h4 {
+  color: var(--color-ink);
+}
+.nawa-swagger .swagger-ui .opblock-body pre.microlight,
+.nawa-swagger .swagger-ui .opblock-body .microlight {
+  background: var(--color-ink);
+  color: var(--color-sand);
+  border-radius: 0.625rem;
+}
+.nawa-swagger .swagger-ui .highlight-code > .microlight code,
+.nawa-swagger .swagger-ui .highlight-code .microlight span {
+  color: inherit;
+}
+.nawa-swagger .swagger-ui .highlight-code {
+  border-radius: 0.625rem;
+}
+.nawa-swagger .swagger-ui .copy-to-clipboard {
+  background: var(--color-line);
+  border-radius: 0.5rem;
+}
+
+/* ---------- tables, params, responses ---------- */
+.nawa-swagger .swagger-ui table thead tr :is(td, th) {
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .parameter__name {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+.nawa-swagger .swagger-ui .parameter__name.required span,
+.nawa-swagger .swagger-ui .parameter__name.required::after {
+  color: var(--color-risk-high);
+}
+.nawa-swagger .swagger-ui .parameter__type,
+.nawa-swagger .swagger-ui .parameter__extension,
+.nawa-swagger .swagger-ui .parameter__in,
+.nawa-swagger .swagger-ui .prop-format {
+  color: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .response-col_status {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+.nawa-swagger .swagger-ui .responses-inner h4,
+.nawa-swagger .swagger-ui .responses-inner h5 {
+  color: var(--color-ink);
+}
+.nawa-swagger .swagger-ui .response-control-media-type--accept-controller select {
+  border-color: var(--color-plum);
+}
+.nawa-swagger .swagger-ui .tab li {
+  color: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .tab li.active {
+  color: var(--color-ink);
+}
+.nawa-swagger .swagger-ui .tab li button.tablinks {
+  color: inherit;
+}
+.nawa-swagger .swagger-ui .tab li:first-of-type::after {
+  background: var(--color-line);
+}
+.nawa-swagger .swagger-ui .response-controls .response-control-media-type__accept-message {
+  color: var(--color-plum);
+}
+
+/* ---------- models ---------- */
+.nawa-swagger .swagger-ui section.models {
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+}
+.nawa-swagger .swagger-ui section.models.is-open h4 {
+  border-bottom: 1px solid var(--color-line);
+}
+.nawa-swagger .swagger-ui .model-box {
+  background: transparent;
+}
+.nawa-swagger .swagger-ui .model .property.primitive,
+.nawa-swagger .swagger-ui .prop-type {
+  color: var(--color-plum);
+}
+
+/* ---------- authorize dialog ---------- */
+.nawa-swagger .swagger-ui .dialog-ux .modal-ux {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 60px -20px rgb(35 26 20 / 0.45);
+}
+.nawa-swagger .swagger-ui .dialog-ux .modal-ux-header {
+  border-bottom: 1px solid var(--color-line);
+}
+.nawa-swagger .swagger-ui .dialog-ux .modal-ux-header h3,
+.nawa-swagger .swagger-ui .dialog-ux .modal-ux-content h4,
+.nawa-swagger .swagger-ui .dialog-ux .modal-ux-content p,
+.nawa-swagger .swagger-ui .dialog-ux .modal-ux-content label {
+  color: var(--color-ink);
+}
+.nawa-swagger .swagger-ui .auth-container {
+  border-bottom: 1px solid var(--color-line);
+}
+
+/* ---------- loading + errors ---------- */
+.nawa-swagger .swagger-ui .loading-container .loading::after {
+  color: var(--color-muted);
+}
+.nawa-swagger .swagger-ui .loading-container .loading::before {
+  border-color: color-mix(in oklab, var(--color-saffron) 30%, transparent);
+  border-top-color: var(--color-plum);
+}
+.nawa-swagger .swagger-ui .errors-wrapper {
+  background: var(--color-risk-high-soft);
+  border-color: var(--color-risk-high);
+}
